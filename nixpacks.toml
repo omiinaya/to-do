@@ -2,14 +2,14 @@
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = ["npm ci"]
+cmds = ["npm ci", "npx prisma generate"]
 
 [phases.build]
 cmds = ["npm run build"]
 
 [start]
-cmd = "npm start"
+cmd = "npx prisma migrate deploy && npm start"
 
 [variables]
 NODE_ENV = "production"
-PORT = "3000"
+DATABASE_URL = "file:./data/todo.db"
