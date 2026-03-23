@@ -121,7 +121,6 @@ All data is stored in your browser's localStorage. No server, no database, no ac
 - [ ] Recurring todos
 - [ ] Subtasks
 - [ ] Tags/labels
-- [ ] Cloud sync (Firebase/Supabase)
 - [ ] Collaboration/sharing
 - [ ] AI chat assistant integration
 - [ ] REST API for external access
