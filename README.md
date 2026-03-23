@@ -1,6 +1,6 @@
 # ToDo Tracker
 
-A modern, fast task management app with dark mode. Organize todos by categories ("things"), track completion, and view productivity stats.
+A modern task tracking and management app with cool stats, pretty graphs and many other features. Organize todos by categories ("things"), track completion, and view productivity stats.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black) ![React](https://img.shields.io/badge/React-19-blue) ![Tailwind](https://img.shields.io/badge/Tailwind-4-teal) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 
