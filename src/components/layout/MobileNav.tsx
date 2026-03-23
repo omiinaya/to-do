@@ -8,6 +8,8 @@ import {
   BarChart3, 
   History,
   Settings,
+  Calendar,
+  LayoutGrid,
   Menu
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,6 +21,8 @@ export function MobileNav() {
   const navItems = [
     { href: "/", label: "Home", icon: LayoutDashboard },
     { href: "/todos", label: "Todos", icon: ListTodo },
+    { href: "/calendar", label: "Calendar", icon: Calendar },
+    { href: "/kanban", label: "Kanban", icon: LayoutGrid },
     { href: "/stats", label: "Stats", icon: BarChart3 },
     { href: "/logs", label: "Logs", icon: History },
     { href: "/settings", label: "Settings", icon: Settings },

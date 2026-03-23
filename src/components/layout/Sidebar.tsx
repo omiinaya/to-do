@@ -9,7 +9,9 @@ import {
   BarChart3, 
   History,
   Plus,
-  Settings
+  Settings,
+  Calendar,
+  LayoutGrid
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -39,6 +41,8 @@ export function Sidebar() {
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/todos", label: "All Todos", icon: ListTodo },
+    { href: "/calendar", label: "Calendar", icon: Calendar },
+    { href: "/kanban", label: "Kanban", icon: LayoutGrid },
     { href: "/stats", label: "Statistics", icon: BarChart3 },
     { href: "/logs", label: "Activity Logs", icon: History },
     { href: "/settings", label: "Settings", icon: Settings },
