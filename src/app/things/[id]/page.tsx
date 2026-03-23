@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,8 +15,12 @@ import { useState } from "react";
 export default function ThingDetailPage() {
   const params = useParams();
   const thingId = params.id as string;
-  const { things, todos, deleteThing } = useTodoStore();
+  const { things, todos, deleteThing, fetchAll } = useTodoStore();
   const [showAddForm, setShowAddForm] = useState(false);
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   const thing = things.find((t) => t.id === thingId);
   const thingTodos = todos.filter((t) => t.thingId === thingId);

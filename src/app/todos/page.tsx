@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { AddTodoForm } from "@/components/todos/AddTodoForm";
 import { ThingSection } from "@/components/todos/ThingSection";
 import { useTodoStore } from "@/lib/store";
 import { Plus, Filter } from "lucide-react";
 
 export default function TodosPage() {
-  const { things, todos } = useTodoStore();
+  const { things, todos, fetchAll } = useTodoStore();
   const [showAddForm, setShowAddForm] = useState(false);
   const [filter, setFilter] = useState<"all" | "pending" | "completed">("all");
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   const filteredThings = things.map((thing) => {
     const thingTodos = todos.filter((t) => t.thingId === thing.id);

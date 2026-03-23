@@ -1,67 +1,79 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTodoStore } from "@/lib/store";
 import { Download, Upload, Trash2 } from "lucide-react";
 
 export default function SettingsPage() {
-  const { things, todos, logs } = useTodoStore();
+  const { things, todos, logs, fetchAll } = useTodoStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importing, setImporting] = useState(false);
 
-  const handleExport = () => {
-    const data = {
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      things,
-      todos,
-      logs,
-    };
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
+
+  const handleExport = async () => {
+    const res = await fetch("/api/export");
+    const data = await res.json();
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `todo-tracker-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `todo-backup-${new Date().toISOString().slice(0, 10)}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setImporting(true);
+
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
         const data = JSON.parse(event.target?.result as string);
 
+        // Validate format - supports both v1 (localStorage) and v2 (SQLite)
         if (!data.things || !data.todos) {
           alert("Invalid backup file format.");
+          setImporting(false);
           return;
         }
 
-        if (!confirm(`Import ${data.things.length} things and ${data.todos.length} todos? This will replace your current data.`)) {
+        const thingCount = data.things.length;
+        const todoCount = data.todos.length;
+
+        if (!confirm(`Import ${thingCount} things and ${todoCount} todos? This will replace all current data.`)) {
+          setImporting(false);
           return;
         }
 
-        // Clear and reload localStorage
-        localStorage.setItem("todo-tracker-storage", JSON.stringify({
-          state: {
-            things: data.things,
-            todos: data.todos,
-            logs: data.logs || [],
-          },
-          version: 0,
-        }));
+        const res = await fetch("/api/import", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
 
-        window.location.reload();
+        const result = await res.json();
+
+        if (result.success) {
+          alert(result.message);
+          await fetchAll();
+        } else {
+          alert("Import failed: " + result.error);
+        }
       } catch {
         alert("Failed to parse backup file. Make sure it's a valid JSON file.");
       }
+      setImporting(false);
     };
     reader.readAsText(file);
 
@@ -69,12 +81,18 @@ export default function SettingsPage() {
     e.target.value = "";
   };
 
-  const handleClearData = () => {
+  const handleClearData = async () => {
     if (!confirm("Are you sure you want to delete ALL your data? This cannot be undone.")) return;
     if (!confirm("Really? Everything will be gone forever.")) return;
 
-    localStorage.removeItem("todo-tracker-storage");
-    window.location.reload();
+    await fetch("/api/import", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ things: [], todos: [], logs: [] }),
+    });
+
+    await fetchAll();
+    alert("All data cleared.");
   };
 
   return (
@@ -91,6 +109,7 @@ export default function SettingsPage() {
           <CardTitle>Backup & Restore</CardTitle>
           <CardDescription>
             Export your data as a JSON file or import from a previous backup.
+            Supports exports from both old (localStorage) and new (database) versions.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -99,9 +118,9 @@ export default function SettingsPage() {
               <Download className="h-4 w-4 mr-2" />
               Export Data
             </Button>
-            <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="flex-1">
+            <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="flex-1" disabled={importing}>
               <Upload className="h-4 w-4 mr-2" />
-              Import Data
+              {importing ? "Importing..." : "Import Data"}
             </Button>
             <input
               ref={fileInputRef}
@@ -119,7 +138,7 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>Current Data</CardTitle>
           <CardDescription>
-            Overview of what&apos;s stored locally in your browser.
+            Overview of what&apos;s stored in the database.
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -19,13 +20,17 @@ import { useState } from "react";
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { things, addThing } = useTodoStore();
+  const { things, addThing, fetchThings } = useTodoStore();
   const [newThingName, setNewThingName] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleAddThing = () => {
+  useEffect(() => {
+    fetchThings();
+  }, [fetchThings]);
+
+  const handleAddThing = async () => {
     if (newThingName.trim()) {
-      addThing(newThingName.trim());
+      await addThing(newThingName.trim());
       setNewThingName("");
       setIsAdding(false);
     }
@@ -48,7 +53,7 @@ export function Sidebar() {
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <ListTodo className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-lg">ToDo Tracker</span>
+            <span className="font-semibold text-lg">To Do</span>
           </Link>
         </div>
 

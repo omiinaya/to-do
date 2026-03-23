@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddTodoForm } from "@/components/todos/AddTodoForm";
 import { ThingSection } from "@/components/todos/ThingSection";
@@ -12,9 +13,13 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
-  const { things, getStats } = useTodoStore();
+  const { things, getStats, fetchAll } = useTodoStore();
   const hasHydrated = useHasHydrated();
   const stats = getStats();
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   if (!hasHydrated) {
     return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTodoStore, useHasHydrated } from "@/lib/store";
 import { format, subDays, startOfDay, endOfDay } from "date-fns";
@@ -26,9 +27,13 @@ import {
 } from "lucide-react";
 
 export default function StatsPage() {
-  const { things, todos, logs, getStats } = useTodoStore();
+  const { things, todos, logs, getStats, fetchAll } = useTodoStore();
   const hasHydrated = useHasHydrated();
   const stats = getStats();
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   if (!hasHydrated) {
     return (

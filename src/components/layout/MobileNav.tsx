@@ -8,16 +8,13 @@ import {
   BarChart3, 
   History,
   Settings,
-  Plus
+  Menu
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { AddTodoForm } from "@/components/todos/AddTodoForm";
 
 export function MobileNav() {
   const pathname = usePathname();
-  const [showAddForm, setShowAddForm] = useState(false);
 
   const navItems = [
     { href: "/", label: "Home", icon: LayoutDashboard },
@@ -32,7 +29,7 @@ export function MobileNav() {
       {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-card border-t border-border">
         <div className="flex items-center justify-around h-16">
-          {navItems.slice(0, 2).map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             return (
@@ -40,36 +37,7 @@ export function MobileNav() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-1 px-3 py-2 text-xs font-medium transition-colors",
-                  isActive
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                )}
-              >
-                <Icon className="w-5 h-5" />
-                {item.label}
-              </Link>
-            );
-          })}
-
-          {/* Add Button */}
-          <Button
-            size="icon"
-            className="h-12 w-12 rounded-full -mt-4 shadow-lg"
-            onClick={() => setShowAddForm(true)}
-          >
-            <Plus className="h-6 w-6" />
-          </Button>
-
-          {navItems.slice(2).map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-1 px-3 py-2 text-xs font-medium transition-colors",
+                  "flex flex-col items-center justify-center gap-1 px-2 py-2 text-xs font-medium transition-colors",
                   isActive
                     ? "text-primary"
                     : "text-muted-foreground"
@@ -118,19 +86,6 @@ export function MobileNav() {
           </nav>
         </div>
       </div>
-
-      {/* Add Todo Form Modal */}
-      {showAddForm && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          <div 
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-            onClick={() => setShowAddForm(false)}
-          />
-          <div className="absolute bottom-20 left-4 right-4 bg-card border border-border rounded-lg shadow-xl p-4">
-            <AddTodoForm onComplete={() => setShowAddForm(false)} />
-          </div>
-        </div>
-      )}
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,12 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function LogsPage() {
-  const { logs, things } = useTodoStore();
+  const { logs, things, fetchAll } = useTodoStore();
   const [filter, setFilter] = useState<"all" | "created" | "completed" | "deleted">("all");
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   const filteredLogs = filter === "all" 
     ? logs 

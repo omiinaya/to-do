@@ -56,10 +56,10 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
           variant="ghost"
           size="icon"
           className="h-8 w-8 hover:text-destructive"
-          onClick={(e) => {
+          onClick={async (e) => {
             e.stopPropagation();
             if (confirm(`Delete "${thing.name}" and all its todos?`)) {
-              deleteThing(thing.id);
+              await deleteThing(thing.id);
             }
           }}
         >

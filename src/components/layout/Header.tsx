@@ -1,15 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Menu, Moon, Sun } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Menu, Moon, Sun, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTodoStore } from "@/lib/store";
+import { startOfDay, endOfDay, subDays } from "date-fns";
 
 export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDark, setIsDark] = useState(true);
-  const { todos, things } = useTodoStore();
+  const { todos, things, logs, fetchAll } = useTodoStore();
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   const toggleTheme = () => {
     setIsDark(!isDark);
@@ -21,6 +26,34 @@ export function Header() {
         todo.note.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
+
+  const calculateStreak = () => {
+    let streak = 0;
+    let currentDate = new Date();
+
+    while (true) {
+      const dayStart = startOfDay(currentDate);
+      const dayEnd = endOfDay(currentDate);
+
+      const hasCompletion = logs.some(
+        (log) =>
+          log.action === "completed" &&
+          new Date(log.timestamp) >= dayStart &&
+          new Date(log.timestamp) <= dayEnd
+      );
+
+      if (hasCompletion) {
+        streak++;
+        currentDate = subDays(currentDate, 1);
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  };
+
+  const streak = calculateStreak();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -75,8 +108,16 @@ export function Header() {
           )}
         </div>
 
-        {/* Spacer for symmetry */}
-        <div className="flex-1 md:flex-none md:w-64 flex justify-end">
+        {/* Right side */}
+        <div className="flex-1 md:flex-none md:w-64 flex justify-end items-center gap-2">
+          {/* Streak */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10">
+            <Flame className={`h-4 w-4 ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`} />
+            <span className={`text-sm font-medium ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`}>
+              {streak}
+            </span>
+          </div>
+
           {/* Theme Toggle */}
           <Button variant="ghost" size="icon" onClick={toggleTheme}>
             {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

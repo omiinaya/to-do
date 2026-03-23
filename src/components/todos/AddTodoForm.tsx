@@ -28,12 +28,12 @@ export function AddTodoForm({ onComplete, defaultThing }: AddTodoFormProps) {
       )
     : [];
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const trimmedThing = thingName.trim();
     const trimmedNote = note.trim();
     
     if (trimmedThing && trimmedNote) {
-      addTodo(trimmedThing, trimmedNote, priority);
+      await addTodo(trimmedThing, trimmedNote, priority);
       setThingName("");
       setNote("");
       setPriority("medium");

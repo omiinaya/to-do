@@ -29,9 +29,9 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
     high: "text-red-400",
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (editNote.trim()) {
-      updateTodo(todo.id, editNote.trim(), editPriority);
+      await updateTodo(todo.id, editNote.trim(), editPriority);
     }
     setIsEditing(false);
   };
@@ -53,7 +53,7 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
       {/* Checkbox */}
       <Checkbox
         checked={todo.completed}
-        onCheckedChange={() => toggleTodo(todo.id)}
+        onCheckedChange={async () => await toggleTodo(todo.id)}
         className="shrink-0"
       />
 
@@ -76,7 +76,10 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
             value={editNote}
             onChange={(e) => setEditNote(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") handleSaveEdit();
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSaveEdit();
+              }
               if (e.key === "Escape") setIsEditing(false);
             }}
             className="w-full px-2 py-1 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
@@ -151,7 +154,7 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
           variant="ghost"
           size="icon"
           className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-          onClick={() => deleteTodo(todo.id)}
+          onClick={async () => await deleteTodo(todo.id)}
         >
           <Trash2 className="h-3.5 w-3.5" />
         </Button>

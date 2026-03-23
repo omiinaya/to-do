@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Thing {
+  id        String   @id @default(uuid())
+  name      String
+  color     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  todos     Todo[]
+  logs      ActivityLog[]
+}
+
+model Todo {
+  id          String   @id @default(uuid())
+  thingId     String
+  note        String
+  completed   Boolean  @default(false)
+  priority    String   @default("medium")
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+  thing       Thing    @relation(fields: [thingId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  action     String
+  entityType String
+  entityId   String
+  entityName String
+  thingId    String?
+  thingName  String?
+  timestamp  DateTime @default(now())
+  thing      Thing?   @relation(fields: [thingId], references: [id], onDelete: SetNull)
+}
