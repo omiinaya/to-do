@@ -14,6 +14,12 @@ export interface Todo {
   priority: "low" | "medium" | "high";
   createdAt: Date;
   completedAt: Date | null;
+  dueDate: Date | null;
+  tags: string; // comma-separated
+  recurrence: "daily" | "weekly" | "monthly" | null;
+  parentTodoId: string | null;
+  subtasks?: Todo[];
+  thing?: Thing;
 }
 
 export interface ActivityLog {
@@ -35,3 +41,4 @@ export interface ChatMessage {
 }
 
 export type Priority = "low" | "medium" | "high";
+export type Recurrence = "daily" | "weekly" | "monthly";

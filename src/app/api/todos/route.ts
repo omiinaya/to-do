@@ -5,15 +5,35 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const thingId = searchParams.get("thingId");
   const completed = searchParams.get("completed");
+  const tag = searchParams.get("tag");
+  const dueDate = searchParams.get("dueDate");
+  const parentTodoId = searchParams.get("parentTodoId");
 
   const where: Record<string, unknown> = {};
   if (thingId) where.thingId = thingId;
   if (completed !== null) where.completed = completed === "true";
+  if (parentTodoId === "null") where.parentTodoId = null;
+  else if (parentTodoId) where.parentTodoId = parentTodoId;
+  if (tag) where.tags = { contains: tag };
+  if (dueDate) {
+    const date = new Date(dueDate);
+    where.dueDate = {
+      gte: new Date(date.setHours(0, 0, 0, 0)),
+      lte: new Date(date.setHours(23, 59, 59, 999)),
+    };
+  }
 
   const todos = await prisma.todo.findMany({
     where,
-    orderBy: { createdAt: "desc" },
-    include: { thing: true },
+    orderBy: [
+      { completed: "asc" },
+      { priority: "desc" },
+      { createdAt: "desc" },
+    ],
+    include: { 
+      thing: true,
+      subtasks: { include: { thing: true } },
+    },
   });
 
   return NextResponse.json({ success: true, data: todos });
@@ -54,8 +74,12 @@ export async function POST(request: Request) {
       thingId: thing.id,
       note: body.note,
       priority: body.priority || "medium",
+      dueDate: body.dueDate ? new Date(body.dueDate) : null,
+      tags: body.tags || "",
+      recurrence: body.recurrence || null,
+      parentTodoId: body.parentTodoId || null,
     },
-    include: { thing: true },
+    include: { thing: true, subtasks: true },
   });
 
   await prisma.activityLog.create({

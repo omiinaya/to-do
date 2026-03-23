@@ -18,14 +18,20 @@ model Thing {
 }
 
 model Todo {
-  id          String   @id @default(uuid())
-  thingId     String
-  note        String
-  completed   Boolean  @default(false)
-  priority    String   @default("medium")
-  createdAt   DateTime @default(now())
-  completedAt DateTime?
-  thing       Thing    @relation(fields: [thingId], references: [id], onDelete: Cascade)
+  id           String   @id @default(uuid())
+  thingId      String
+  note         String
+  completed    Boolean  @default(false)
+  priority     String   @default("medium")
+  createdAt    DateTime @default(now())
+  completedAt  DateTime?
+  dueDate      DateTime?
+  tags         String   @default("") // comma-separated tags
+  recurrence   String?  // "daily", "weekly", "monthly", or null
+  parentTodoId String?
+  parent       Todo?    @relation("Subtasks", fields: [parentTodoId], references: [id], onDelete: Cascade)
+  subtasks     Todo[]   @relation("Subtasks")
+  thing        Thing    @relation(fields: [thingId], references: [id], onDelete: Cascade)
 }
 
 model ActivityLog {

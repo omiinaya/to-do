@@ -1,5 +1,12 @@
 import { create } from 'zustand';
-import { Thing, Todo, ActivityLog, Priority } from '@/types';
+import { Thing, Todo, ActivityLog, Priority, Recurrence } from '@/types';
+
+interface TodoOptions {
+  dueDate?: string | null;
+  tags?: string;
+  recurrence?: Recurrence | null;
+  parentTodoId?: string | null;
+}
 
 interface TodoStore {
   things: Thing[];
@@ -20,8 +27,8 @@ interface TodoStore {
   deleteThing: (id: string) => Promise<void>;
 
   // Todo actions
-  addTodo: (thingName: string, note: string, priority?: Priority) => Promise<void>;
-  updateTodo: (id: string, note: string, priority?: Priority) => Promise<void>;
+  addTodo: (thingName: string, note: string, priority?: Priority, options?: TodoOptions) => Promise<void>;
+  updateTodo: (id: string, note: string, priority?: Priority, options?: TodoOptions) => Promise<void>;
   toggleTodo: (id: string) => Promise<void>;
   deleteTodo: (id: string) => Promise<void>;
 
@@ -59,7 +66,7 @@ export const useTodoStore = create<TodoStore>()((set, get) => ({
   },
 
   fetchTodos: async () => {
-    const res = await fetch('/api/todos');
+    const res = await fetch('/api/todos?parentTodoId=null');
     const json = await res.json();
     if (json.success) set({ todos: json.data });
   },
@@ -109,20 +116,20 @@ export const useTodoStore = create<TodoStore>()((set, get) => ({
     }
   },
 
-  addTodo: async (thingName: string, note: string, priority: Priority = 'medium') => {
+  addTodo: async (thingName: string, note: string, priority: Priority = 'medium', options?: TodoOptions) => {
     const res = await fetch('/api/todos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ thingName, note, priority }),
+      body: JSON.stringify({ thingName, note, priority, ...options }),
     });
     if (res.ok) await get().fetchAll();
   },
 
-  updateTodo: async (id: string, note: string, priority?: Priority) => {
+  updateTodo: async (id: string, note: string, priority?: Priority, options?: TodoOptions) => {
     const res = await fetch(`/api/todos/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ note, priority }),
+      body: JSON.stringify({ note, priority, ...options }),
     });
     if (res.ok) await get().fetchTodos();
   },
