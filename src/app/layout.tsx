@@ -5,6 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { NotificationHandler } from "@/components/NotificationHandler";
+import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,6 +50,8 @@ export default function RootLayout({
           
           {/* Mobile Navigation */}
           <MobileNav />
+          <NotificationHandler />
+          <KeyboardShortcuts />
         </TooltipProvider>
       </body>
     </html>

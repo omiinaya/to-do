@@ -25,12 +25,16 @@ export async function PUT(
   const { id } = await params;
   const body = await request.json();
 
+  const data: Record<string, unknown> = {};
+  if (body.note !== undefined) data.note = body.note;
+  if (body.priority !== undefined) data.priority = body.priority;
+  if (body.dueDate !== undefined) data.dueDate = body.dueDate ? new Date(body.dueDate) : null;
+  if (body.tags !== undefined) data.tags = body.tags;
+  if (body.recurrence !== undefined) data.recurrence = body.recurrence || null;
+
   const todo = await prisma.todo.update({
     where: { id },
-    data: {
-      note: body.note,
-      priority: body.priority,
-    },
+    data,
     include: { thing: true },
   });
 

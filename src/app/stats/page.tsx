@@ -25,6 +25,7 @@ import {
   Target,
   Flame
 } from "lucide-react";
+import { ActivityHeatmap } from "@/components/ActivityHeatmap";
 
 export default function StatsPage() {
   const { things, todos, logs, getStats, fetchAll } = useTodoStore();
@@ -276,6 +277,19 @@ export default function StatsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Activity Heatmap */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Flame className="h-5 w-5" />
+            Activity Heatmap
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ActivityHeatmap logs={logs} />
+        </CardContent>
+      </Card>
 
       {/* Charts Row 2 */}
       <Card>

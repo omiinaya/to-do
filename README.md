@@ -8,13 +8,25 @@ A modern task tracking and management app with cool stats, pretty graphs and man
 
 - **Quick entry** - Type a category name + your note, hit enter. Done.
 - **Autocomplete** - Existing categories show up as you type
-- **Inline editing** - Click pencil to edit note and priority, trash to delete
+- **Inline editing** - Click pencil to edit note, priority, due date, tags, and recurrence
+- **Due dates** - Set due dates with color-coded indicators (overdue, today, upcoming)
+- **Reminders** - Browser notifications for overdue, today, and upcoming todos
+- **Recurring todos** - Auto-creates next occurrence on completion (daily/weekly/monthly)
+- **Subtasks** - Break todos into smaller items
+- **Tags** - Organize todos with comma-separated tags
 - **Checkboxes** - Mark todos complete, see completion dates
 - **Activity logs** - Full history of what you created, completed, deleted
-- **Statistics** - Charts for weekly activity, priority distribution, per-category breakdown
+- **Statistics** - Charts for weekly activity, priority distribution, activity heatmap, per-category breakdown
+- **Calendar view** - Monthly calendar showing todos by due date
+- **Kanban board** - Visual board with Backlog, Today, Upcoming, Done columns
 - **Import/Export** - Backup your data as JSON, restore anytime
+- **Auto-backup** - Automatic backups (max 30) with one-click restore
+- **Search** - Real-time search across all todos
+- **Streak counter** - Tracks consecutive days of completions
+- **Share links** - Copy shareable URLs for any thing/category
 - **Dark mode** - Professional dark theme out of the box
 - **Responsive** - Works on desktop, tablet, and mobile with bottom nav
+- **Keyboard shortcuts** - Ctrl+N add, Ctrl+K search, Ctrl+B toggle sidebar
 
 ## Requirements
 
@@ -101,15 +113,16 @@ Go to **Settings** to:
 
 ## Data Storage
 
-All data is stored in your browser's localStorage. No server, no database, no account needed. Your data stays on your device.
+Data is stored in SQLite via Prisma ORM. The database runs on the server and can be backed up using the built-in export/import or auto-backup system.
 
-**Note**: Clearing browser data will delete your todos. Use the export feature to back up regularly.
+**Note**: Use the export feature to back up your data regularly. Backups are stored as JSON files on the server.
 
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
 - **UI**: shadcn/ui + Tailwind CSS 4
-- **State**: Zustand with localStorage persistence
+- **Database**: SQLite via Prisma ORM
+- **State**: Zustand (fetches from API)
 - **Charts**: Recharts
 - **Dates**: date-fns
 - **Icons**: Lucide React
@@ -117,16 +130,15 @@ All data is stored in your browser's localStorage. No server, no database, no ac
 
 ## Planned Features
 
-- [ ] Due dates and reminders
-- [ ] Recurring todos
-- [ ] Subtasks
-- [ ] Tags/labels
-- [ ] Collaboration/sharing
+- [x] Due dates and reminders
+- [x] Recurring todos
+- [x] Subtasks
+- [x] Tags/labels
+- [x] Calendar view
+- [x] Kanban board view
+- [x] REST API for external access
+- [x] Collaboration/sharing
 - [ ] AI chat assistant integration
-- [ ] REST API for external access
-- [ ] Mobile app (React Native)
-- [ ] Calendar view
-- [ ] Kanban board view
 
 ## License
 

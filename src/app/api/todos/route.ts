@@ -8,6 +8,14 @@ export async function GET(request: Request) {
   const tag = searchParams.get("tag");
   const dueDate = searchParams.get("dueDate");
   const parentTodoId = searchParams.get("parentTodoId");
+  const search = searchParams.get("search");
+  const sortBy = searchParams.get("sortBy") || "createdAt";
+  const order = (searchParams.get("order") || "desc") as "asc" | "desc";
+  const limit = searchParams.get("limit");
+  const offset = searchParams.get("offset");
+  const dueBefore = searchParams.get("dueBefore");
+  const dueAfter = searchParams.get("dueAfter");
+  const priority = searchParams.get("priority");
 
   const where: Record<string, unknown> = {};
   if (thingId) where.thingId = thingId;
@@ -15,6 +23,8 @@ export async function GET(request: Request) {
   if (parentTodoId === "null") where.parentTodoId = null;
   else if (parentTodoId) where.parentTodoId = parentTodoId;
   if (tag) where.tags = { contains: tag };
+  if (priority) where.priority = priority;
+  if (search) where.note = { contains: search };
   if (dueDate) {
     const date = new Date(dueDate);
     where.dueDate = {
@@ -22,21 +32,44 @@ export async function GET(request: Request) {
       lte: new Date(date.setHours(23, 59, 59, 999)),
     };
   }
+  if (dueBefore) {
+    where.dueDate = {
+      ...(where.dueDate as Record<string, unknown> || {}),
+      lte: new Date(dueBefore),
+    };
+  }
+  if (dueAfter) {
+    where.dueDate = {
+      ...(where.dueDate as Record<string, unknown> || {}),
+      gte: new Date(dueAfter),
+    };
+  }
 
-  const todos = await prisma.todo.findMany({
-    where,
-    orderBy: [
-      { completed: "asc" },
-      { priority: "desc" },
-      { createdAt: "desc" },
-    ],
-    include: { 
-      thing: true,
-      subtasks: { include: { thing: true } },
-    },
+  const validSortFields = ["createdAt", "completedAt", "dueDate", "priority", "note"];
+  const sortField = validSortFields.includes(sortBy) ? sortBy : "createdAt";
+
+  const [todos, total] = await Promise.all([
+    prisma.todo.findMany({
+      where,
+      orderBy: [
+        { completed: "asc" },
+        { [sortField]: order },
+      ],
+      take: limit ? parseInt(limit) : undefined,
+      skip: offset ? parseInt(offset) : undefined,
+      include: { 
+        thing: true,
+        subtasks: { include: { thing: true } },
+      },
+    }),
+    prisma.todo.count({ where }),
+  ]);
+
+  return NextResponse.json({
+    success: true,
+    data: todos,
+    meta: { total, limit: limit ? parseInt(limit) : null, offset: offset ? parseInt(offset) : 0 },
   });
-
-  return NextResponse.json({ success: true, data: todos });
 }
 
 export async function POST(request: Request) {

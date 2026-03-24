@@ -52,6 +52,7 @@ export function AddTodoForm({ onComplete, defaultThing }: AddTodoFormProps) {
     <div className="space-y-3">
       <div className="relative">
         <Input
+          id="quick-add-thing"
           ref={thingInputRef}
           type="text"
           placeholder="Thing name (e.g., Work, Groceries)"

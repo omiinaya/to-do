@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronRight, MoreVertical, Pencil, Trash2, Copy, Check, CheckCircle2 } from "lucide-react";
+import { ChevronDown, ChevronRight, MoreVertical, Pencil, Trash2, Copy, Check, CheckCircle2, Share2, Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -37,6 +37,7 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
   const [editName, setEditName] = useState(thing.name);
   const [editColor, setEditColor] = useState(thing.color);
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const { todos, deleteThing, updateThing } = useTodoStore();
 
   const thingTodos = todos.filter((t) => t.thingId === thing.id);
@@ -89,6 +90,28 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
+    }
+  };
+
+  const handleCopyLink = async () => {
+    const url = `${window.location.origin}/things/${thing.id}`;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = url;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy link:", err);
     }
   };
 
@@ -197,6 +220,20 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
               {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
             </Button>
 
+            {/* Share Link Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCopyLink();
+              }}
+              title="Copy share link"
+            >
+              {linkCopied ? <Check className="h-4 w-4 text-green-500" /> : <Link className="h-4 w-4" />}
+            </Button>
+
             {/* Dropdown Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -218,6 +255,13 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
                 }}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => {
+                  e.stopPropagation();
+                  handleCopyLink();
+                }}>
+                  <Share2 className="h-4 w-4 mr-2" />
+                  {linkCopied ? "Link copied!" : "Share Link"}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={async (e) => {
