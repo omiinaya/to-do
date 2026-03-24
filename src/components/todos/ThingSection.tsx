@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronRight, MoreVertical, Pencil, Trash2, Copy, Check } from "lucide-react";
+import { ChevronDown, ChevronRight, MoreVertical, Pencil, Trash2, Copy, Check, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TodoItem } from "./TodoItem";
 import { useTodoStore } from "@/lib/store";
-import { Thing } from "@/types";
+import { Thing, Todo } from "@/types";
 
 const THING_COLORS = [
   '#3b82f6', // blue
@@ -40,7 +40,13 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
   const { todos, deleteThing, updateThing } = useTodoStore();
 
   const thingTodos = todos.filter((t) => t.thingId === thing.id);
-  const completedCount = thingTodos.filter((t) => t.completed).length;
+  const pendingTodos = thingTodos.filter((t) => !t.completed).sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+  const completedTodos = thingTodos.filter((t) => t.completed).sort((a, b) => 
+    new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime()
+  );
+  const completedCount = completedTodos.length;
   const totalCount = thingTodos.length;
   const progress = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
@@ -62,8 +68,23 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
       completedAt: todo.completedAt,
     }));
 
+    const text = JSON.stringify(exportData, null, 2);
+
     try {
-      await navigator.clipboard.writeText(JSON.stringify(exportData, null, 2));
+      // Try clipboard API first (requires HTTPS or localhost)
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for non-secure contexts (HTTP over LAN)
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -76,17 +97,51 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
       {/* Header */}
       <div
         onClick={() => !isEditing && setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-3 p-3 hover:bg-accent/50 transition-colors cursor-pointer"
+        className={isEditing ? "p-3" : "w-full flex items-center gap-3 p-3 hover:bg-accent/50 transition-colors cursor-pointer"}
       >
-        {isOpen ? (
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
-        ) : (
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-        )}
-        
         {isEditing ? (
-          <div className="flex items-center gap-2">
-            <div className="flex gap-1">
+          <div onClick={(e) => e.stopPropagation()}>
+            {/* Main row: chevron, color, name, save */}
+            <div className="flex items-center gap-3">
+              {isOpen ? (
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              )}
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: editColor }}
+              />
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSaveEdit();
+                  if (e.key === "Escape") {
+                    setEditName(thing.name);
+                    setEditColor(thing.color);
+                    setIsEditing(false);
+                  }
+                }}
+                size={Math.max(editName.length + 2, 10)}
+                className="px-2 py-1 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                autoFocus
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-green-500 hover:text-green-400 hover:bg-green-500/10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSaveEdit();
+                }}
+              >
+                <Check className="h-4 w-4" />
+              </Button>
+            </div>
+            {/* Color picker row */}
+            <div className="flex gap-1.5 mt-2 ml-7">
               {THING_COLORS.map(color => (
                 <button
                   key={color}
@@ -94,43 +149,22 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
                     e.stopPropagation();
                     setEditColor(color);
                   }}
-                  className={`w-5 h-5 rounded-full border-2 transition-all ${
-                    editColor === color ? "border-foreground scale-110" : "border-transparent"
+                  className={`w-4 h-4 rounded-full border-2 transition-all ${
+                    editColor === color ? "border-foreground scale-110" : "border-transparent hover:scale-105"
                   }`}
                   style={{ backgroundColor: color }}
                 />
               ))}
             </div>
-            <input
-              type="text"
-              value={editName}
-              onChange={(e) => setEditName(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSaveEdit();
-                if (e.key === "Escape") {
-                  setEditName(thing.name);
-                  setEditColor(thing.color);
-                  setIsEditing(false);
-                }
-              }}
-              className="px-2 py-1 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring w-32"
-              autoFocus
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 text-green-500"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSaveEdit();
-              }}
-            >
-              <Check className="h-3 w-3" />
-            </Button>
           </div>
         ) : (
           <>
+            {isOpen ? (
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            )}
+            
             <div
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: thing.color }}
@@ -185,13 +219,6 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
                   <Pencil className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  handleCopyJson();
-                }}>
-                  <Copy className="h-4 w-4 mr-2" />
-                  Copy as JSON
-                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={async (e) => {
                     e.stopPropagation();
@@ -212,19 +239,56 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
 
       {/* Todo List */}
       {isOpen && (
-        <div className="px-3 pb-3 space-y-2">
+        <div className="px-3 pb-3">
           {thingTodos.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
               No todos yet. Add one above!
             </p>
           ) : (
-            thingTodos
-              .sort((a, b) => {
-                if (a.completed !== b.completed) return a.completed ? 1 : -1;
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-              })
-              .map((todo) => <TodoItem key={todo.id} todo={todo} />)
+            <div className="space-y-4">
+              {/* Pending tasks */}
+              {pendingTodos.length > 0 && (
+                <div className="space-y-2">
+                  {pendingTodos.map((todo) => (
+                    <TodoItem key={todo.id} todo={todo} />
+                  ))}
+                </div>
+              )}
+
+              {/* Completed tasks (collapsed) */}
+              {completedTodos.length > 0 && (
+                <CompletedSection todos={completedTodos} />
+              )}
+            </div>
           )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CompletedSection({ todos }: { todos: Todo[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-t border-border pt-2">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground w-full py-1"
+      >
+        {isOpen ? (
+          <ChevronDown className="h-3 w-3" />
+        ) : (
+          <ChevronRight className="h-3 w-3" />
+        )}
+        <CheckCircle2 className="h-3 w-3 text-green-500" />
+        <span>{todos.length} completed</span>
+      </button>
+      {isOpen && (
+        <div className="space-y-2 mt-2">
+          {todos.map((todo) => (
+            <TodoItem key={todo.id} todo={todo} />
+          ))}
         </div>
       )}
     </div>

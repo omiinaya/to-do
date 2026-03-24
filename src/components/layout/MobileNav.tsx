@@ -60,7 +60,13 @@ export function MobileNav() {
         id="mobile-sidebar"
         className="fixed inset-0 z-50 hidden md:hidden"
       >
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+        <div 
+          className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+          onClick={() => {
+            const sidebar = document.getElementById("mobile-sidebar");
+            sidebar?.classList.add("hidden");
+          }}
+        />
         <div className="absolute left-0 top-0 bottom-0 w-72 bg-card border-r border-border p-4">
           <h2 className="text-lg font-semibold mb-4">Menu</h2>
           <nav className="space-y-2">

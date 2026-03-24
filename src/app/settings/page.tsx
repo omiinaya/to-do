@@ -3,17 +3,72 @@
 import { useRef, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useTodoStore } from "@/lib/store";
-import { Download, Upload, Trash2 } from "lucide-react";
+import { Download, Upload, Trash2, RefreshCw, RotateCcw, Database, HardDrive } from "lucide-react";
 
 export default function SettingsPage() {
   const { things, todos, logs, fetchAll } = useTodoStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importing, setImporting] = useState(false);
+  const [backups, setBackups] = useState<string[]>([]);
+  const [loadingBackups, setLoadingBackups] = useState(false);
+  const [creatingBackup, setCreatingBackup] = useState(false);
 
   useEffect(() => {
     fetchAll();
+    loadBackups();
   }, [fetchAll]);
+
+  const loadBackups = async () => {
+    setLoadingBackups(true);
+    try {
+      const res = await fetch("/api/backup");
+      const json = await res.json();
+      if (json.success) setBackups(json.data);
+    } catch (err) {
+      console.error("Failed to load backups:", err);
+    }
+    setLoadingBackups(false);
+  };
+
+  const createBackup = async () => {
+    setCreatingBackup(true);
+    try {
+      const res = await fetch("/api/backup", { method: "POST" });
+      const json = await res.json();
+      if (json.success) {
+        alert(json.message);
+        await loadBackups();
+      } else {
+        alert("Backup failed: " + json.error);
+      }
+    } catch (err) {
+      alert("Backup failed");
+    }
+    setCreatingBackup(false);
+  };
+
+  const restoreBackup = async (filename: string) => {
+    if (!confirm(`Restore from "${filename}"? This will replace all current data.`)) return;
+
+    try {
+      const res = await fetch(`/api/backup/restore`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        alert("Restored successfully!");
+        await fetchAll();
+      } else {
+        alert("Restore failed: " + json.error);
+      }
+    } catch (err) {
+      alert("Restore failed");
+    }
+  };
 
   const handleExport = async () => {
     const res = await fetch("/api/export");
@@ -41,7 +96,6 @@ export default function SettingsPage() {
       try {
         const data = JSON.parse(event.target?.result as string);
 
-        // Validate format - supports both v1 (localStorage) and v2 (SQLite)
         if (!data.things || !data.todos) {
           alert("Invalid backup file format.");
           setImporting(false);
@@ -77,7 +131,6 @@ export default function SettingsPage() {
     };
     reader.readAsText(file);
 
-    // Reset input so same file can be selected again
     e.target.value = "";
   };
 
@@ -95,21 +148,81 @@ export default function SettingsPage() {
     alert("All data cleared.");
   };
 
+  const formatBackupName = (filename: string) => {
+    // backup-2026-03-24T01-33-34-462Z.json -> 2026-03-24 01:33:34
+    const match = filename.match(/backup-(\d{4}-\d{2}-\d{2})T(\d{2})-(\d{2})-(\d{2})/);
+    if (match) {
+      return `${match[1]} ${match[2]}:${match[3]}:${match[4]}`;
+    }
+    return filename;
+  };
+
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
+    <div className="space-y-6 max-w-2xl mx-auto pb-20 md:pb-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">Manage your data and preferences.</p>
       </div>
 
-      {/* Import / Export */}
+      {/* Automatic Backups */}
       <Card>
         <CardHeader>
-          <CardTitle>Backup & Restore</CardTitle>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="h-5 w-5" />
+                Automatic Backups
+              </CardTitle>
+              <CardDescription>
+                Server keeps up to 30 backups. Schedule daily backups via cron with: <code className="text-xs bg-muted px-1 rounded">curl -X POST http://your-host:7171/api/backup</code>
+              </CardDescription>
+            </div>
+            <Button onClick={createBackup} disabled={creatingBackup} size="sm">
+              {creatingBackup ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <HardDrive className="h-4 w-4 mr-2" />}
+              Backup Now
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loadingBackups ? (
+            <p className="text-muted-foreground text-sm">Loading backups...</p>
+          ) : backups.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No backups yet. Click &quot;Backup Now&quot; to create one.</p>
+          ) : (
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {backups.map((filename) => (
+                <div
+                  key={filename}
+                  className="flex items-center justify-between p-2 rounded-lg bg-muted/50 hover:bg-muted/70"
+                >
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      {formatBackupName(filename)}
+                    </Badge>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => restoreBackup(filename)}
+                    className="text-xs"
+                  >
+                    <RotateCcw className="h-3 w-3 mr-1" />
+                    Restore
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Manual Import / Export */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Manual Backup & Restore</CardTitle>
           <CardDescription>
             Export your data as a JSON file or import from a previous backup.
-            Supports exports from both old (localStorage) and new (database) versions.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
