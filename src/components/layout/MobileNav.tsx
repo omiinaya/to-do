@@ -66,6 +66,15 @@ export function MobileNav() {
             const sidebar = document.getElementById("mobile-sidebar");
             sidebar?.classList.add("hidden");
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              const sidebar = document.getElementById("mobile-sidebar");
+              sidebar?.classList.add("hidden");
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close sidebar"
         />
         <div className="absolute left-0 top-0 bottom-0 w-72 bg-card border-r border-border p-4">
           <h2 className="text-lg font-semibold mb-4">Menu</h2>

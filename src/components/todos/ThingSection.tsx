@@ -120,10 +120,19 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
       {/* Header */}
       <div
         onClick={() => !isEditing && setIsOpen(!isOpen)}
+        onKeyDown={(e) => {
+          if (!isEditing && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            setIsOpen(!isOpen);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isOpen}
         className={isEditing ? "p-3" : "w-full flex items-center gap-3 p-3 hover:bg-accent/50 transition-colors cursor-pointer"}
       >
         {isEditing ? (
-          <div onClick={(e) => e.stopPropagation()}>
+          <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()} role="button" tabIndex={-1}>
             {/* Main row: chevron, color, name, save */}
             <div className="flex items-center gap-3">
               {isOpen ? (
