@@ -22,7 +22,7 @@ function setNotifiedId(id: string) {
   // Prune entries older than 24 hours
   const cutoff = Date.now() - 24 * 60 * 60 * 1000;
   const pruned = Object.fromEntries(
-    Object.entries(ids).filter(([, ts]) => ts > cutoff)
+    Object.entries(ids).filter(([, ts]) => ts > cutoff),
   );
   pruned[id] = Date.now();
   localStorage.setItem(NOTIFIED_KEY, JSON.stringify(pruned));
@@ -74,7 +74,9 @@ export function NotificationHandler() {
         body = "Due tomorrow";
       }
 
-      const thing = useTodoStore.getState().things.find((t) => t.id === todo.thingId);
+      const thing = useTodoStore
+        .getState()
+        .things.find((t) => t.id === todo.thingId);
       const title = thing ? `${thing.name}: ${todo.note}` : todo.note;
 
       try {

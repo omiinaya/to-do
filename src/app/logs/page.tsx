@@ -6,27 +6,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTodoStore } from "@/lib/store";
-import { 
-  Plus, 
-  CheckCircle2, 
-  XCircle, 
-  Trash2, 
+import {
+  Plus,
+  CheckCircle2,
+  XCircle,
+  Trash2,
   Edit2,
-  Filter
+  Filter,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function LogsPage() {
   const { logs, things, fetchAll } = useTodoStore();
-  const [filter, setFilter] = useState<"all" | "created" | "completed" | "deleted">("all");
+  const [filter, setFilter] = useState<
+    "all" | "created" | "completed" | "deleted"
+  >("all");
 
   useEffect(() => {
     fetchAll();
   }, [fetchAll]);
 
-  const filteredLogs = filter === "all" 
-    ? logs 
-    : logs.filter((log) => log.action === filter);
+  const filteredLogs =
+    filter === "all" ? logs : logs.filter((log) => log.action === filter);
 
   const getActionIcon = (action: string) => {
     switch (action) {
@@ -113,8 +114,8 @@ export default function LogsPage() {
           ) : (
             <div className="space-y-3">
               {filteredLogs.map((log) => {
-                const thing = log.thingId 
-                  ? things.find((t) => t.id === log.thingId) 
+                const thing = log.thingId
+                  ? things.find((t) => t.id === log.thingId)
                   : null;
 
                 return (
@@ -123,14 +124,14 @@ export default function LogsPage() {
                     className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors"
                   >
                     {/* Icon */}
-                    <div className="mt-0.5">
-                      {getActionIcon(log.action)}
-                    </div>
+                    <div className="mt-0.5">{getActionIcon(log.action)}</div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <Badge className={cn("text-xs", getActionColor(log.action))}>
+                        <Badge
+                          className={cn("text-xs", getActionColor(log.action))}
+                        >
                           {getActionText(log.action)}
                         </Badge>
                         <span className="text-sm font-medium">

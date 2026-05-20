@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   const todo = await prisma.todo.findUnique({
@@ -12,7 +12,10 @@ export async function GET(
   });
 
   if (!todo) {
-    return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
+    return NextResponse.json(
+      { success: false, error: "Not found" },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json({ success: true, data: todo });
@@ -20,7 +23,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   const body = await request.json();
@@ -28,7 +31,8 @@ export async function PUT(
   const data: Record<string, unknown> = {};
   if (body.note !== undefined) data.note = body.note;
   if (body.priority !== undefined) data.priority = body.priority;
-  if (body.dueDate !== undefined) data.dueDate = body.dueDate ? new Date(body.dueDate) : null;
+  if (body.dueDate !== undefined)
+    data.dueDate = body.dueDate ? new Date(body.dueDate) : null;
   if (body.tags !== undefined) data.tags = body.tags;
   if (body.recurrence !== undefined) data.recurrence = body.recurrence || null;
 
@@ -43,10 +47,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  
+
   const todo = await prisma.todo.findUnique({
     where: { id },
     include: { thing: true },

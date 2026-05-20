@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { writeFileSync, mkdirSync, readdirSync, unlinkSync, existsSync } from "fs";
+import {
+  writeFileSync,
+  mkdirSync,
+  readdirSync,
+  unlinkSync,
+  existsSync,
+} from "fs";
 import { join } from "path";
 
 const BACKUP_DIR = join(process.cwd(), "backups");
@@ -36,7 +42,7 @@ export async function POST() {
 
     // Clean up old backups (keep only MAX_BACKUPS)
     const files = readdirSync(BACKUP_DIR)
-      .filter(f => f.startsWith("backup-") && f.endsWith(".json"))
+      .filter((f) => f.startsWith("backup-") && f.endsWith(".json"))
       .sort((a, b) => a.localeCompare(b));
 
     if (files.length > MAX_BACKUPS) {
@@ -55,7 +61,7 @@ export async function POST() {
     console.error("Backup failed:", error);
     return NextResponse.json(
       { success: false, error: "Backup failed: " + (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -67,7 +73,7 @@ export async function GET() {
     }
 
     const files = readdirSync(BACKUP_DIR)
-      .filter(f => f.startsWith("backup-") && f.endsWith(".json"))
+      .filter((f) => f.startsWith("backup-") && f.endsWith(".json"))
       .sort((a, b) => b.localeCompare(a))
       .reverse();
 
@@ -75,7 +81,7 @@ export async function GET() {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: "Failed to list backups" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -37,21 +37,34 @@ export async function POST(request: Request) {
   try {
     const { filename } = await request.json();
 
-    if (!filename || !filename.startsWith("backup-") || !filename.endsWith(".json")) {
-      return NextResponse.json({ success: false, error: "Invalid filename" }, { status: 400 });
+    if (
+      !filename ||
+      !filename.startsWith("backup-") ||
+      !filename.endsWith(".json")
+    ) {
+      return NextResponse.json(
+        { success: false, error: "Invalid filename" },
+        { status: 400 },
+      );
     }
 
     const filepath = join(BACKUP_DIR, filename);
 
     if (!existsSync(filepath)) {
-      return NextResponse.json({ success: false, error: "Backup not found" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: "Backup not found" },
+        { status: 404 },
+      );
     }
 
     const fileContent = readFileSync(filepath, "utf-8");
     const data: BackupData = JSON.parse(fileContent);
 
     if (!data.things || !data.todos) {
-      return NextResponse.json({ success: false, error: "Invalid backup format" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "Invalid backup format" },
+        { status: 400 },
+      );
     }
 
     // Clear existing data
@@ -116,7 +129,7 @@ export async function POST(request: Request) {
     console.error("Restore failed:", error);
     return NextResponse.json(
       { success: false, error: "Restore failed: " + (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

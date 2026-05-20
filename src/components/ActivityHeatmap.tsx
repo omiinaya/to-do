@@ -28,7 +28,7 @@ export function ActivityHeatmap({ logs, days = 84 }: ActivityHeatmapProps) {
         (log) =>
           log.action === "completed" &&
           new Date(log.timestamp) >= dayStart &&
-          new Date(log.timestamp) <= dayEnd
+          new Date(log.timestamp) <= dayEnd,
       ).length;
 
       let level = 0;
@@ -49,7 +49,7 @@ export function ActivityHeatmap({ logs, days = 84 }: ActivityHeatmapProps) {
   }, [logs, days]);
 
   // Group into weeks
-  const weeks: typeof cells[] = [];
+  const weeks: (typeof cells)[] = [];
   let currentWeek: typeof cells = [];
 
   cells.forEach((cell) => {
@@ -97,7 +97,7 @@ export function ActivityHeatmap({ logs, days = 84 }: ActivityHeatmapProps) {
                   title={`${format(cell.date, "MMM d")}: ${cell.count} completions`}
                   className={cn(
                     "w-3 h-3 rounded-[2px] transition-colors",
-                    levelColors[cell.level]
+                    levelColors[cell.level],
                   )}
                 />
               );
@@ -109,10 +109,7 @@ export function ActivityHeatmap({ logs, days = 84 }: ActivityHeatmapProps) {
         <div className="flex items-center gap-1 mt-2 ml-8">
           <span className="text-[10px] text-muted-foreground mr-1">Less</span>
           {levelColors.map((color, i) => (
-            <div
-              key={i}
-              className={cn("w-3 h-3 rounded-[2px]", color)}
-            />
+            <div key={i} className={cn("w-3 h-3 rounded-[2px]", color)} />
           ))}
           <span className="text-[10px] text-muted-foreground ml-1">More</span>
         </div>

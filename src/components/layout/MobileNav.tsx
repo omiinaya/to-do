@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  ListTodo, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  ListTodo,
+  BarChart3,
   History,
   Settings,
   Calendar,
   LayoutGrid,
-  Menu
+  Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -42,9 +42,7 @@ export function MobileNav() {
                 href={item.href}
                 className={cn(
                   "flex flex-col items-center justify-center gap-1 px-2 py-2 text-xs font-medium transition-colors",
-                  isActive
-                    ? "text-primary"
-                    : "text-muted-foreground"
+                  isActive ? "text-primary" : "text-muted-foreground",
                 )}
               >
                 <Icon className="w-5 h-5" />
@@ -56,18 +54,15 @@ export function MobileNav() {
       </nav>
 
       {/* Mobile Sidebar (hidden by default) */}
-      <div
-        id="mobile-sidebar"
-        className="fixed inset-0 z-50 hidden md:hidden"
-      >
-        <div 
+      <div id="mobile-sidebar" className="fixed inset-0 z-50 hidden md:hidden">
+        <div
           className="absolute inset-0 bg-background/80 backdrop-blur-sm"
           onClick={() => {
             const sidebar = document.getElementById("mobile-sidebar");
             sidebar?.classList.add("hidden");
           }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+            if (e.key === "Enter" || e.key === " ") {
               const sidebar = document.getElementById("mobile-sidebar");
               sidebar?.classList.add("hidden");
             }
@@ -94,7 +89,7 @@ export function MobileNav() {
                     "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                     isActive
                       ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                   )}
                 >
                   <Icon className="w-5 h-5" />

@@ -25,13 +25,13 @@ export async function GET(request: Request) {
       const completed = logs.filter(
         (log) =>
           new Date(log.timestamp) >= dayStart &&
-          new Date(log.timestamp) <= dayEnd
+          new Date(log.timestamp) <= dayEnd,
       ).length;
 
       const created = todos.filter(
         (todo) =>
           new Date(todo.createdAt) >= dayStart &&
-          new Date(todo.createdAt) <= dayEnd
+          new Date(todo.createdAt) <= dayEnd,
       ).length;
 
       return { date: format(date, "yyyy-MM-dd"), completed, created };
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
       const count = logs.filter(
         (log) =>
           new Date(log.timestamp) >= dayStart &&
-          new Date(log.timestamp) <= dayEnd
+          new Date(log.timestamp) <= dayEnd,
       ).length;
 
       return { date: format(date, "yyyy-MM-dd"), count };
@@ -71,9 +71,12 @@ export async function GET(request: Request) {
 
   const totalThings = things.length;
   const totalTodos = await prisma.todo.count();
-  const completedTodos = await prisma.todo.count({ where: { completed: true } });
+  const completedTodos = await prisma.todo.count({
+    where: { completed: true },
+  });
   const pendingTodos = totalTodos - completedTodos;
-  const completionRate = totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
+  const completionRate =
+    totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
 
   const thingsStats = things.map((thing) => {
     const total = thing.todos.length;

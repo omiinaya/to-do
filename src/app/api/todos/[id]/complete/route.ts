@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { addDays, addWeeks, addMonths } from "date-fns";
 
-function getNextDueDate(currentDueDate: Date | null, recurrence: string | null): Date | null {
+function getNextDueDate(
+  currentDueDate: Date | null,
+  recurrence: string | null,
+): Date | null {
   if (!recurrence) return null;
   const base = currentDueDate || new Date();
   switch (recurrence) {
@@ -19,7 +22,7 @@ function getNextDueDate(currentDueDate: Date | null, recurrence: string | null):
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
 
@@ -29,7 +32,10 @@ export async function PATCH(
   });
 
   if (!existing) {
-    return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
+    return NextResponse.json(
+      { success: false, error: "Not found" },
+      { status: 404 },
+    );
   }
 
   const newCompleted = !existing.completed;

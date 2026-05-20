@@ -1,11 +1,25 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTodoStore } from "@/lib/store";
-import { Download, Upload, Trash2, RefreshCw, RotateCcw, Database, HardDrive } from "lucide-react";
+import {
+  Download,
+  Upload,
+  Trash2,
+  RefreshCw,
+  RotateCcw,
+  Database,
+  HardDrive,
+} from "lucide-react";
 
 export default function SettingsPage() {
   const { things, todos, logs, fetchAll } = useTodoStore();
@@ -50,7 +64,12 @@ export default function SettingsPage() {
   };
 
   const restoreBackup = async (filename: string) => {
-    if (!confirm(`Restore from "${filename}"? This will replace all current data.`)) return;
+    if (
+      !confirm(
+        `Restore from "${filename}"? This will replace all current data.`,
+      )
+    )
+      return;
 
     try {
       const res = await fetch(`/api/backup/restore`, {
@@ -74,7 +93,9 @@ export default function SettingsPage() {
     const res = await fetch("/api/export");
     const data = await res.json();
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -105,7 +126,11 @@ export default function SettingsPage() {
         const thingCount = data.things.length;
         const todoCount = data.todos.length;
 
-        if (!confirm(`Import ${thingCount} things and ${todoCount} todos? This will replace all current data.`)) {
+        if (
+          !confirm(
+            `Import ${thingCount} things and ${todoCount} todos? This will replace all current data.`,
+          )
+        ) {
           setImporting(false);
           return;
         }
@@ -135,7 +160,12 @@ export default function SettingsPage() {
   };
 
   const handleClearData = async () => {
-    if (!confirm("Are you sure you want to delete ALL your data? This cannot be undone.")) return;
+    if (
+      !confirm(
+        "Are you sure you want to delete ALL your data? This cannot be undone.",
+      )
+    )
+      return;
     if (!confirm("Really? Everything will be gone forever.")) return;
 
     await fetch("/api/import", {
@@ -150,7 +180,9 @@ export default function SettingsPage() {
 
   const formatBackupName = (filename: string) => {
     // backup-2026-03-24T01-33-34-462Z.json -> 2026-03-24 01:33:34
-    const match = filename.match(/backup-(\d{4}-\d{2}-\d{2})T(\d{2})-(\d{2})-(\d{2})/);
+    const match = filename.match(
+      /backup-(\d{4}-\d{2}-\d{2})T(\d{2})-(\d{2})-(\d{2})/,
+    );
     if (match) {
       return `${match[1]} ${match[2]}:${match[3]}:${match[4]}`;
     }
@@ -162,7 +194,9 @@ export default function SettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Manage your data and preferences.</p>
+        <p className="text-muted-foreground">
+          Manage your data and preferences.
+        </p>
       </div>
 
       {/* Automatic Backups */}
@@ -175,11 +209,19 @@ export default function SettingsPage() {
                 Automatic Backups
               </CardTitle>
               <CardDescription>
-                Server keeps up to 30 backups. Schedule daily backups via cron with: <code className="text-xs bg-muted px-1 rounded">curl -X POST http://your-host:7171/api/backup</code>
+                Server keeps up to 30 backups. Schedule daily backups via cron
+                with:{" "}
+                <code className="text-xs bg-muted px-1 rounded">
+                  curl -X POST http://your-host:7171/api/backup
+                </code>
               </CardDescription>
             </div>
             <Button onClick={createBackup} disabled={creatingBackup} size="sm">
-              {creatingBackup ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <HardDrive className="h-4 w-4 mr-2" />}
+              {creatingBackup ? (
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <HardDrive className="h-4 w-4 mr-2" />
+              )}
               Backup Now
             </Button>
           </div>
@@ -188,7 +230,9 @@ export default function SettingsPage() {
           {loadingBackups ? (
             <p className="text-muted-foreground text-sm">Loading backups...</p>
           ) : backups.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No backups yet. Click &quot;Backup Now&quot; to create one.</p>
+            <p className="text-muted-foreground text-sm">
+              No backups yet. Click &quot;Backup Now&quot; to create one.
+            </p>
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {backups.map((filename) => (
@@ -231,7 +275,12 @@ export default function SettingsPage() {
               <Download className="h-4 w-4 mr-2" />
               Export Data
             </Button>
-            <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="flex-1" disabled={importing}>
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              variant="outline"
+              className="flex-1"
+              disabled={importing}
+            >
               <Upload className="h-4 w-4 mr-2" />
               {importing ? "Importing..." : "Import Data"}
             </Button>
@@ -276,9 +325,7 @@ export default function SettingsPage() {
       <Card className="border-destructive/50">
         <CardHeader>
           <CardTitle className="text-destructive">Danger Zone</CardTitle>
-          <CardDescription>
-            Irreversible actions. Be careful.
-          </CardDescription>
+          <CardDescription>Irreversible actions. Be careful.</CardDescription>
         </CardHeader>
         <CardContent>
           <Button onClick={handleClearData} variant="destructive">

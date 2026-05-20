@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { format, isPast, isToday } from "date-fns";
-import { Trash2, Pencil, Check, Calendar, Tag, Repeat, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Trash2,
+  Pencil,
+  Check,
+  Calendar,
+  Tag,
+  Repeat,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,17 +28,22 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editNote, setEditNote] = useState(todo.note);
   const [editPriority, setEditPriority] = useState<Priority>(todo.priority);
-  const [editDueDate, setEditDueDate] = useState(todo.dueDate ? format(new Date(todo.dueDate), "yyyy-MM-dd") : "");
+  const [editDueDate, setEditDueDate] = useState(
+    todo.dueDate ? format(new Date(todo.dueDate), "yyyy-MM-dd") : "",
+  );
   const [editTags, setEditTags] = useState(todo.tags || "");
-  const [editRecurrence, setEditRecurrence] = useState<Recurrence | "">(todo.recurrence || "");
+  const [editRecurrence, setEditRecurrence] = useState<Recurrence | "">(
+    todo.recurrence || "",
+  );
   const [showSubtasks, setShowSubtasks] = useState(false);
   const [newSubtask, setNewSubtask] = useState("");
-  const { toggleTodo, deleteTodo, updateTodo, addTodo, things } = useTodoStore();
+  const { toggleTodo, deleteTodo, updateTodo, addTodo, things } =
+    useTodoStore();
 
   const thing = things.find((t) => t.id === todo.thingId);
-  const tags = todo.tags ? todo.tags.split(",").filter(t => t.trim()) : [];
+  const tags = todo.tags ? todo.tags.split(",").filter((t) => t.trim()) : [];
   const subtasks = todo.subtasks || [];
-  const completedSubtasks = subtasks.filter(s => s.completed).length;
+  const completedSubtasks = subtasks.filter((s) => s.completed).length;
 
   const priorityTextColors: Record<Priority, string> = {
     low: "text-green-400",
@@ -60,7 +74,9 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
   const handleStartEdit = () => {
     setEditNote(todo.note);
     setEditPriority(todo.priority);
-    setEditDueDate(todo.dueDate ? format(new Date(todo.dueDate), "yyyy-MM-dd") : "");
+    setEditDueDate(
+      todo.dueDate ? format(new Date(todo.dueDate), "yyyy-MM-dd") : "",
+    );
     setEditTags(todo.tags || "");
     setEditRecurrence(todo.recurrence || "");
     setIsEditing(true);
@@ -81,7 +97,7 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
         className={cn(
           "group flex items-center gap-3 p-2.5 rounded-lg border border-border bg-card transition-all hover:border-accent",
           todo.completed && "opacity-60",
-          isEditing && "border-primary/50"
+          isEditing && "border-primary/50",
         )}
       >
         {/* Checkbox */}
@@ -99,7 +115,11 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
             className="h-5 w-5 p-0"
             onClick={() => setShowSubtasks(!showSubtasks)}
           >
-            {showSubtasks ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+            {showSubtasks ? (
+              <ChevronDown className="h-3 w-3" />
+            ) : (
+              <ChevronRight className="h-3 w-3" />
+            )}
           </Button>
         )}
 
@@ -136,7 +156,7 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
               <p
                 className={cn(
                   "text-sm truncate",
-                  todo.completed && "line-through text-muted-foreground"
+                  todo.completed && "line-through text-muted-foreground",
                 )}
               >
                 {todo.note}
@@ -145,7 +165,11 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
               {tags.length > 0 && !isEditing && (
                 <div className="flex gap-1 mt-1 flex-wrap">
                   {tags.map((tag, i) => (
-                    <Badge key={i} variant="outline" className="text-xs px-1.5 py-0">
+                    <Badge
+                      key={i}
+                      variant="outline"
+                      className="text-xs px-1.5 py-0"
+                    >
                       <Tag className="h-2.5 w-2.5 mr-1" />
                       {tag.trim()}
                     </Badge>
@@ -165,7 +189,7 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
                 onChange={(e) => setEditPriority(e.target.value as Priority)}
                 className={cn(
                   "text-xs rounded-md px-2 py-0.5 bg-background border border-input focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer",
-                  priorityTextColors[editPriority]
+                  priorityTextColors[editPriority],
                 )}
               >
                 <option value="low">low</option>
@@ -187,7 +211,9 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
               />
               <select
                 value={editRecurrence}
-                onChange={(e) => setEditRecurrence(e.target.value as Recurrence | "")}
+                onChange={(e) =>
+                  setEditRecurrence(e.target.value as Recurrence | "")
+                }
                 className="text-xs px-2 py-0.5 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="">no repeat</option>
@@ -201,11 +227,22 @@ export function TodoItem({ todo, showThingName = false }: TodoItemProps) {
               {todo.recurrence && (
                 <Repeat className="h-3.5 w-3.5 text-blue-400" />
               )}
-              <Badge variant="secondary" className={cn("text-xs bg-muted", priorityTextColors[todo.priority])}>
+              <Badge
+                variant="secondary"
+                className={cn(
+                  "text-xs bg-muted",
+                  priorityTextColors[todo.priority],
+                )}
+              >
                 {todo.priority}
               </Badge>
               {todo.dueDate && (
-                <span className={cn("text-xs flex items-center gap-1", getDueDateColor())}>
+                <span
+                  className={cn(
+                    "text-xs flex items-center gap-1",
+                    getDueDateColor(),
+                  )}
+                >
                   <Calendar className="h-3 w-3" />
                   {format(new Date(todo.dueDate), "MMM d")}
                 </span>

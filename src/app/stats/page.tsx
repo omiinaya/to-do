@@ -18,13 +18,7 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-import { 
-  TrendingUp, 
-  Clock, 
-  FolderOpen,
-  Target,
-  Flame
-} from "lucide-react";
+import { TrendingUp, Clock, FolderOpen, Target, Flame } from "lucide-react";
 import { ActivityHeatmap } from "@/components/ActivityHeatmap";
 
 export default function StatsPage() {
@@ -49,18 +43,18 @@ export default function StatsPage() {
     const date = subDays(new Date(), 6 - i);
     const dayStart = startOfDay(date);
     const dayEnd = endOfDay(date);
-    
+
     const completed = logs.filter(
       (log) =>
         log.action === "completed" &&
         new Date(log.timestamp) >= dayStart &&
-        new Date(log.timestamp) <= dayEnd
+        new Date(log.timestamp) <= dayEnd,
     ).length;
 
     const created = todos.filter(
       (todo) =>
         new Date(todo.createdAt) >= dayStart &&
-        new Date(todo.createdAt) <= dayEnd
+        new Date(todo.createdAt) <= dayEnd,
     ).length;
 
     return {
@@ -87,7 +81,7 @@ export default function StatsPage() {
       value: todos.filter((t) => t.priority === "low").length,
       color: "#22c55e",
     },
-  ].filter(d => d.value > 0);
+  ].filter((d) => d.value > 0);
 
   // Things stats for bar chart
   const thingsData = stats.thingsStats.map((s) => ({
@@ -101,16 +95,16 @@ export default function StatsPage() {
   const calculateStreak = () => {
     let streak = 0;
     let currentDate = new Date();
-    
+
     while (true) {
       const dayStart = startOfDay(currentDate);
       const dayEnd = endOfDay(currentDate);
-      
+
       const hasCompletion = logs.some(
         (log) =>
           log.action === "completed" &&
           new Date(log.timestamp) >= dayStart &&
-          new Date(log.timestamp) <= dayEnd
+          new Date(log.timestamp) <= dayEnd,
       );
 
       if (hasCompletion) {
@@ -120,7 +114,7 @@ export default function StatsPage() {
         break;
       }
     }
-    
+
     return streak;
   };
 
@@ -131,14 +125,18 @@ export default function StatsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Statistics</h1>
-        <p className="text-muted-foreground">Track your productivity and progress.</p>
+        <p className="text-muted-foreground">
+          Track your productivity and progress.
+        </p>
       </div>
 
       {/* Overview Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Completion Rate
+            </CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -153,7 +151,9 @@ export default function StatsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Current Streak</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Current Streak
+            </CardTitle>
             <Flame className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
@@ -199,7 +199,12 @@ export default function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ width: "100%", height: 250 }}>
-              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={250}>
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+                minWidth={0}
+                minHeight={250}
+              >
                 <AreaChart data={completionTrend}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
                   <XAxis dataKey="date" stroke="#71717a" fontSize={12} />
@@ -243,7 +248,12 @@ export default function StatsPage() {
           <CardContent>
             <div style={{ width: "100%", height: 250 }}>
               {priorityData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={250}>
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                  minWidth={0}
+                  minHeight={250}
+                >
                   <PieChart>
                     <Pie
                       data={priorityData}
@@ -299,11 +309,22 @@ export default function StatsPage() {
         <CardContent>
           <div style={{ width: "100%", height: 300 }}>
             {thingsData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={300}>
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+                minWidth={0}
+                minHeight={300}
+              >
                 <BarChart data={thingsData} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
                   <XAxis type="number" stroke="#71717a" fontSize={12} />
-                  <YAxis dataKey="name" type="category" stroke="#71717a" fontSize={12} width={100} />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    stroke="#71717a"
+                    fontSize={12}
+                    width={100}
+                  />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "#18181b",
@@ -311,8 +332,18 @@ export default function StatsPage() {
                       borderRadius: "8px",
                     }}
                   />
-                  <Bar dataKey="completed" stackId="a" fill="#22c55e" name="Completed" />
-                  <Bar dataKey="pending" stackId="a" fill="#f59e0b" name="Pending" />
+                  <Bar
+                    dataKey="completed"
+                    stackId="a"
+                    fill="#22c55e"
+                    name="Completed"
+                  />
+                  <Bar
+                    dataKey="pending"
+                    stackId="a"
+                    fill="#f59e0b"
+                    name="Pending"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -355,12 +386,8 @@ export default function StatsPage() {
                     <span className="text-green-500">
                       {s.completed} completed
                     </span>
-                    <span className="text-yellow-500">
-                      {s.pending} pending
-                    </span>
-                    <span className="font-medium">
-                      {Math.round(s.rate)}%
-                    </span>
+                    <span className="text-yellow-500">{s.pending} pending</span>
+                    <span className="font-medium">{Math.round(s.rate)}%</span>
                   </div>
                 </div>
               ))

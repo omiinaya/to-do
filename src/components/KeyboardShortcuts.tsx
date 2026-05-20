@@ -21,7 +21,9 @@ export function KeyboardShortcuts() {
           router.push("/");
         }
         setTimeout(() => {
-          const el = document.getElementById("quick-add-thing") as HTMLInputElement;
+          const el = document.getElementById(
+            "quick-add-thing",
+          ) as HTMLInputElement;
           el?.focus();
         }, 100);
       }
@@ -39,7 +41,7 @@ export function KeyboardShortcuts() {
         sidebar?.classList.toggle("hidden");
       }
     },
-    [router]
+    [router],
   );
 
   useEffect(() => {

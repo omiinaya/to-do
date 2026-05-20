@@ -34,30 +34,33 @@ export async function GET(request: Request) {
   }
   if (dueBefore) {
     where.dueDate = {
-      ...(where.dueDate as Record<string, unknown> || {}),
+      ...((where.dueDate as Record<string, unknown>) || {}),
       lte: new Date(dueBefore),
     };
   }
   if (dueAfter) {
     where.dueDate = {
-      ...(where.dueDate as Record<string, unknown> || {}),
+      ...((where.dueDate as Record<string, unknown>) || {}),
       gte: new Date(dueAfter),
     };
   }
 
-  const validSortFields = ["createdAt", "completedAt", "dueDate", "priority", "note"];
+  const validSortFields = [
+    "createdAt",
+    "completedAt",
+    "dueDate",
+    "priority",
+    "note",
+  ];
   const sortField = validSortFields.includes(sortBy) ? sortBy : "createdAt";
 
   const [todos, total] = await Promise.all([
     prisma.todo.findMany({
       where,
-      orderBy: [
-        { completed: "asc" },
-        { [sortField]: order },
-      ],
+      orderBy: [{ completed: "asc" }, { [sortField]: order }],
       take: limit ? parseInt(limit) : undefined,
       skip: offset ? parseInt(offset) : undefined,
-      include: { 
+      include: {
         thing: true,
         subtasks: { include: { thing: true } },
       },
@@ -68,13 +71,26 @@ export async function GET(request: Request) {
   return NextResponse.json({
     success: true,
     data: todos,
-    meta: { total, limit: limit ? parseInt(limit) : null, offset: offset ? parseInt(offset) : 0 },
+    meta: {
+      total,
+      limit: limit ? parseInt(limit) : null,
+      offset: offset ? parseInt(offset) : 0,
+    },
   });
 }
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const colors = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#f97316"];
+  const colors = [
+    "#3b82f6",
+    "#22c55e",
+    "#f59e0b",
+    "#ef4444",
+    "#8b5cf6",
+    "#ec4899",
+    "#06b6d4",
+    "#f97316",
+  ];
 
   // Find or create thing
   let thing = await prisma.thing.findFirst({

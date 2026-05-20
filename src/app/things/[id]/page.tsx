@@ -25,7 +25,8 @@ export default function ThingDetailPage() {
   const thing = things.find((t) => t.id === thingId);
   const thingTodos = todos.filter((t) => t.thingId === thingId);
   const completedCount = thingTodos.filter((t) => t.completed).length;
-  const progress = thingTodos.length > 0 ? (completedCount / thingTodos.length) * 100 : 0;
+  const progress =
+    thingTodos.length > 0 ? (completedCount / thingTodos.length) * 100 : 0;
 
   if (!thing) {
     return (
@@ -127,7 +128,10 @@ export default function ThingDetailPage() {
           thingTodos
             .sort((a, b) => {
               if (a.completed !== b.completed) return a.completed ? 1 : -1;
-              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+              return (
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+              );
             })
             .map((todo) => <TodoItem key={todo.id} todo={todo} />)
         )}

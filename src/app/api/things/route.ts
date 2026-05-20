@@ -10,10 +10,21 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const colors = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#f97316"];
-  
+  const colors = [
+    "#3b82f6",
+    "#22c55e",
+    "#f59e0b",
+    "#ef4444",
+    "#8b5cf6",
+    "#ec4899",
+    "#06b6d4",
+    "#f97316",
+  ];
+
   const allThings = await prisma.thing.findMany();
-  const existing = allThings.find(t => t.name.toLowerCase() === body.name.toLowerCase());
+  const existing = allThings.find(
+    (t) => t.name.toLowerCase() === body.name.toLowerCase(),
+  );
 
   if (existing) {
     return NextResponse.json({ success: true, data: existing });

@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     if (!body.things || !body.todos) {
       return NextResponse.json(
         { success: false, error: "Invalid format: missing things or todos" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -55,7 +55,9 @@ export async function POST(request: Request) {
         data: {
           name: oldThing.name,
           color: oldThing.color || "#3b82f6",
-          createdAt: oldThing.createdAt ? new Date(oldThing.createdAt) : new Date(),
+          createdAt: oldThing.createdAt
+            ? new Date(oldThing.createdAt)
+            : new Date(),
         },
       });
       idMap.set(oldThing.id, thing.id);
@@ -73,8 +75,12 @@ export async function POST(request: Request) {
           note: oldTodo.note,
           completed: oldTodo.completed,
           priority: oldTodo.priority || "medium",
-          createdAt: oldTodo.createdAt ? new Date(oldTodo.createdAt) : new Date(),
-          completedAt: oldTodo.completedAt ? new Date(oldTodo.completedAt) : null,
+          createdAt: oldTodo.createdAt
+            ? new Date(oldTodo.createdAt)
+            : new Date(),
+          completedAt: oldTodo.completedAt
+            ? new Date(oldTodo.completedAt)
+            : null,
         },
       });
     }
@@ -92,7 +98,9 @@ export async function POST(request: Request) {
             entityName: oldLog.entityName,
             thingId: newThingId,
             thingName: oldLog.thingName,
-            timestamp: oldLog.timestamp ? new Date(oldLog.timestamp) : new Date(),
+            timestamp: oldLog.timestamp
+              ? new Date(oldLog.timestamp)
+              : new Date(),
           },
         });
       }
@@ -110,7 +118,7 @@ export async function POST(request: Request) {
     console.error("Import failed:", error);
     return NextResponse.json(
       { success: false, error: "Import failed: " + (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -17,21 +17,22 @@ export function AddTodoForm({ onComplete, defaultThing }: AddTodoFormProps) {
   const [note, setNote] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  
+
   const { things, addTodo } = useTodoStore();
   const thingInputRef = useRef<HTMLInputElement>(null);
   const noteInputRef = useRef<HTMLInputElement>(null);
 
-  const suggestions = thingName.length > 0
-    ? things.filter((t) =>
-        t.name.toLowerCase().includes(thingName.toLowerCase())
-      )
-    : [];
+  const suggestions =
+    thingName.length > 0
+      ? things.filter((t) =>
+          t.name.toLowerCase().includes(thingName.toLowerCase()),
+        )
+      : [];
 
   const handleSubmit = async () => {
     const trimmedThing = thingName.trim();
     const trimmedNote = note.trim();
-    
+
     if (trimmedThing && trimmedNote) {
       await addTodo(trimmedThing, trimmedNote, priority);
       setThingName("");
@@ -78,7 +79,7 @@ export function AddTodoForm({ onComplete, defaultThing }: AddTodoFormProps) {
           }}
           className="bg-muted/50"
         />
-        
+
         {showSuggestions && suggestions.length > 0 && (
           <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-md shadow-lg max-h-40 overflow-auto z-50">
             {suggestions.map((thing) => (
@@ -128,9 +129,9 @@ export function AddTodoForm({ onComplete, defaultThing }: AddTodoFormProps) {
                 ? p === "high"
                   ? "bg-red-500/20 text-red-400"
                   : p === "medium"
-                  ? "bg-yellow-500/20 text-yellow-400"
-                  : "bg-green-500/20 text-green-400"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    ? "bg-yellow-500/20 text-yellow-400"
+                    : "bg-green-500/20 text-green-400"
+                : "bg-muted text-muted-foreground hover:bg-muted/80",
             )}
           >
             {p}

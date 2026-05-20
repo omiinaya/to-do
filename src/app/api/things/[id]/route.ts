@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   const thing = await prisma.thing.findUnique({
@@ -12,7 +12,10 @@ export async function GET(
   });
 
   if (!thing) {
-    return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
+    return NextResponse.json(
+      { success: false, error: "Not found" },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json({ success: true, data: thing });
@@ -20,7 +23,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   const body = await request.json();
@@ -38,7 +41,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
 

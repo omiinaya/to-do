@@ -28,7 +28,7 @@ export default function KanbanPage() {
       done: [],
     };
 
-    todos.forEach(todo => {
+    todos.forEach((todo) => {
       if (todo.completed) {
         columns.done.push(todo);
       } else if (!todo.dueDate) {
@@ -74,7 +74,9 @@ export default function KanbanPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Kanban Board</h1>
-        <p className="text-muted-foreground">Visual board view of your todos.</p>
+        <p className="text-muted-foreground">
+          Visual board view of your todos.
+        </p>
       </div>
 
       {/* Board */}
@@ -82,7 +84,9 @@ export default function KanbanPage() {
         {columnConfig.map(({ key, title, color }) => (
           <div key={key} className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className={cn("font-semibold flex items-center gap-2", color)}>
+              <h2
+                className={cn("font-semibold flex items-center gap-2", color)}
+              >
                 <LayoutGrid className="h-4 w-4" />
                 {title}
               </h2>
@@ -92,9 +96,11 @@ export default function KanbanPage() {
             </div>
 
             <div className="space-y-2 min-h-[200px]">
-              {columns[key].map(todo => {
-                const thing = things.find(t => t.id === todo.thingId);
-                const tags = todo.tags ? todo.tags.split(",").filter(t => t.trim()) : [];
+              {columns[key].map((todo) => {
+                const thing = things.find((t) => t.id === todo.thingId);
+                const tags = todo.tags
+                  ? todo.tags.split(",").filter((t) => t.trim())
+                  : [];
 
                 return (
                   <Card
@@ -102,7 +108,7 @@ export default function KanbanPage() {
                     className={cn(
                       "border-l-4 cursor-pointer hover:border-accent transition-colors",
                       priorityColors[todo.priority],
-                      todo.completed && "opacity-60"
+                      todo.completed && "opacity-60",
                     )}
                   >
                     <CardContent className="p-3 space-y-2">
@@ -113,10 +119,13 @@ export default function KanbanPage() {
                           className="mt-0.5"
                         />
                         <div className="flex-1 min-w-0">
-                          <p className={cn(
-                            "text-sm",
-                            todo.completed && "line-through text-muted-foreground"
-                          )}>
+                          <p
+                            className={cn(
+                              "text-sm",
+                              todo.completed &&
+                                "line-through text-muted-foreground",
+                            )}
+                          >
                             {todo.note}
                           </p>
                         </div>
@@ -134,7 +143,12 @@ export default function KanbanPage() {
                           </Badge>
                         )}
                         {todo.dueDate && (
-                          <span className={cn("text-xs flex items-center gap-1", getDueDateColor(todo))}>
+                          <span
+                            className={cn(
+                              "text-xs flex items-center gap-1",
+                              getDueDateColor(todo),
+                            )}
+                          >
                             <Calendar className="h-3 w-3" />
                             {format(new Date(todo.dueDate), "MMM d")}
                           </span>
@@ -148,7 +162,11 @@ export default function KanbanPage() {
                       {tags.length > 0 && (
                         <div className="flex gap-1 flex-wrap pl-6">
                           {tags.map((tag, i) => (
-                            <Badge key={i} variant="secondary" className="text-xs px-1.5 py-0">
+                            <Badge
+                              key={i}
+                              variant="secondary"
+                              className="text-xs px-1.5 py-0"
+                            >
                               <Tag className="h-2.5 w-2.5 mr-1" />
                               {tag.trim()}
                             </Badge>

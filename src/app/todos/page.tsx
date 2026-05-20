@@ -17,15 +17,17 @@ export default function TodosPage() {
     fetchAll();
   }, [fetchAll]);
 
-  const filteredThings = things.map((thing) => {
-    const thingTodos = todos.filter((t) => t.thingId === thing.id);
-    const filteredTodos = thingTodos.filter((todo) => {
-      if (filter === "pending") return !todo.completed;
-      if (filter === "completed") return todo.completed;
-      return true;
-    });
-    return { thing, hasTodos: filteredTodos.length > 0 };
-  }).filter(({ hasTodos }) => hasTodos || filter === "all");
+  const filteredThings = things
+    .map((thing) => {
+      const thingTodos = todos.filter((t) => t.thingId === thing.id);
+      const filteredTodos = thingTodos.filter((todo) => {
+        if (filter === "pending") return !todo.completed;
+        if (filter === "completed") return todo.completed;
+        return true;
+      });
+      return { thing, hasTodos: filteredTodos.length > 0 };
+    })
+    .filter(({ hasTodos }) => hasTodos || filter === "all");
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -33,7 +35,9 @@ export default function TodosPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">All Todos</h1>
-          <p className="text-muted-foreground">Manage all your todos in one place.</p>
+          <p className="text-muted-foreground">
+            Manage all your todos in one place.
+          </p>
         </div>
         <Button onClick={() => setShowAddForm(!showAddForm)}>
           <Plus className="h-4 w-4 mr-2" />

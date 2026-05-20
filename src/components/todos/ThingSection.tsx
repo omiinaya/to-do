@@ -1,7 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronRight, MoreVertical, Pencil, Trash2, Copy, Check, CheckCircle2, Share2, Link } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  MoreVertical,
+  Pencil,
+  Trash2,
+  Copy,
+  Check,
+  CheckCircle2,
+  Share2,
+  Link,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,16 +25,16 @@ import { useTodoStore } from "@/lib/store";
 import { Thing, Todo } from "@/types";
 
 const THING_COLORS = [
-  '#3b82f6', // blue
-  '#22c55e', // green
-  '#f59e0b', // amber
-  '#ef4444', // red
-  '#8b5cf6', // violet
-  '#ec4899', // pink
-  '#06b6d4', // cyan
-  '#f97316', // orange
-  '#84cc16', // lime
-  '#14b8a6', // teal
+  "#3b82f6", // blue
+  "#22c55e", // green
+  "#f59e0b", // amber
+  "#ef4444", // red
+  "#8b5cf6", // violet
+  "#ec4899", // pink
+  "#06b6d4", // cyan
+  "#f97316", // orange
+  "#84cc16", // lime
+  "#14b8a6", // teal
 ];
 
 interface ThingSectionProps {
@@ -41,12 +52,19 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
   const { todos, deleteThing, updateThing } = useTodoStore();
 
   const thingTodos = todos.filter((t) => t.thingId === thing.id);
-  const pendingTodos = thingTodos.filter((t) => !t.completed).sort((a, b) => 
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-  const completedTodos = thingTodos.filter((t) => t.completed).sort((a, b) => 
-    new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime()
-  );
+  const pendingTodos = thingTodos
+    .filter((t) => !t.completed)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  const completedTodos = thingTodos
+    .filter((t) => t.completed)
+    .sort(
+      (a, b) =>
+        new Date(b.completedAt || b.createdAt).getTime() -
+        new Date(a.completedAt || a.createdAt).getTime(),
+    );
   const completedCount = completedTodos.length;
   const totalCount = thingTodos.length;
   const progress = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
@@ -59,7 +77,7 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
   };
 
   const handleCopyJson = async () => {
-    const exportData = thingTodos.map(todo => ({
+    const exportData = thingTodos.map((todo) => ({
       note: todo.note,
       completed: todo.completed,
       priority: todo.priority,
@@ -121,7 +139,7 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
       <div
         onClick={() => !isEditing && setIsOpen(!isOpen)}
         onKeyDown={(e) => {
-          if (!isEditing && (e.key === 'Enter' || e.key === ' ')) {
+          if (!isEditing && (e.key === "Enter" || e.key === " ")) {
             e.preventDefault();
             setIsOpen(!isOpen);
           }
@@ -129,10 +147,19 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
         role="button"
         tabIndex={0}
         aria-expanded={isOpen}
-        className={isEditing ? "p-3" : "w-full flex items-center gap-3 p-3 hover:bg-accent/50 transition-colors cursor-pointer"}
+        className={
+          isEditing
+            ? "p-3"
+            : "w-full flex items-center gap-3 p-3 hover:bg-accent/50 transition-colors cursor-pointer"
+        }
       >
         {isEditing ? (
-          <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()} role="button" tabIndex={-1}>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="button"
+            tabIndex={-1}
+          >
             {/* Main row: chevron, color, name, save */}
             <div className="flex items-center gap-3">
               {isOpen ? (
@@ -174,7 +201,7 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
             </div>
             {/* Color picker row */}
             <div className="flex gap-1.5 mt-2 ml-7">
-              {THING_COLORS.map(color => (
+              {THING_COLORS.map((color) => (
                 <button
                   key={color}
                   onClick={(e) => {
@@ -182,7 +209,9 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
                     setEditColor(color);
                   }}
                   className={`w-4 h-4 rounded-full border-2 transition-all ${
-                    editColor === color ? "border-foreground scale-110" : "border-transparent hover:scale-105"
+                    editColor === color
+                      ? "border-foreground scale-110"
+                      : "border-transparent hover:scale-105"
                   }`}
                   style={{ backgroundColor: color }}
                 />
@@ -196,14 +225,14 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
             ) : (
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             )}
-            
+
             <div
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: thing.color }}
             />
-            
+
             <span className="font-medium flex-1 text-left">{thing.name}</span>
-            
+
             <span className="text-sm text-muted-foreground">
               {completedCount}/{totalCount}
             </span>
@@ -226,7 +255,11 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
               }}
               title="Copy as JSON"
             >
-              {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+              {copied ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
             </Button>
 
             {/* Share Link Button */}
@@ -240,7 +273,11 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
               }}
               title="Copy share link"
             >
-              {linkCopied ? <Check className="h-4 w-4 text-green-500" /> : <Link className="h-4 w-4" />}
+              {linkCopied ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <Link className="h-4 w-4" />
+              )}
             </Button>
 
             {/* Dropdown Menu */}
@@ -256,19 +293,23 @@ export function ThingSection({ thing, defaultOpen = true }: ThingSectionProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  setEditName(thing.name);
-                  setEditColor(thing.color);
-                  setIsEditing(true);
-                }}>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditName(thing.name);
+                    setEditColor(thing.color);
+                    setIsEditing(true);
+                  }}
+                >
                   <Pencil className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  handleCopyLink();
-                }}>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyLink();
+                  }}
+                >
                   <Share2 className="h-4 w-4 mr-2" />
                   {linkCopied ? "Link copied!" : "Share Link"}
                 </DropdownMenuItem>

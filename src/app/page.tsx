@@ -5,12 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddTodoForm } from "@/components/todos/AddTodoForm";
 import { ThingSection } from "@/components/todos/ThingSection";
 import { useTodoStore, useHasHydrated } from "@/lib/store";
-import { 
-  ListTodo, 
-  CheckCircle2, 
-  Clock, 
-  FolderOpen 
-} from "lucide-react";
+import { ListTodo, CheckCircle2, Clock, FolderOpen } from "lucide-react";
 
 export default function Dashboard() {
   const { things, getStats, fetchAll } = useTodoStore();
@@ -34,7 +29,9 @@ export default function Dashboard() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back! Here&apos;s your overview.</p>
+        <p className="text-muted-foreground">
+          Welcome back! Here&apos;s your overview.
+        </p>
       </div>
 
       {/* Stats Cards */}
@@ -65,7 +62,9 @@ export default function Dashboard() {
             <CheckCircle2 className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-500">{stats.completedTodos}</div>
+            <div className="text-2xl font-bold text-green-500">
+              {stats.completedTodos}
+            </div>
           </CardContent>
         </Card>
 
@@ -75,7 +74,9 @@ export default function Dashboard() {
             <Clock className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-500">{stats.pendingTodos}</div>
+            <div className="text-2xl font-bold text-yellow-500">
+              {stats.pendingTodos}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -102,9 +103,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         ) : (
-          things.map((thing) => (
-            <ThingSection key={thing.id} thing={thing} />
-          ))
+          things.map((thing) => <ThingSection key={thing.id} thing={thing} />)
         )}
       </div>
     </div>

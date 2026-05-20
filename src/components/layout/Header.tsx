@@ -23,7 +23,7 @@ export function Header() {
 
   const searchResults = searchQuery
     ? todos.filter((todo) =>
-        todo.note.toLowerCase().includes(searchQuery.toLowerCase())
+        todo.note.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     : [];
 
@@ -39,7 +39,7 @@ export function Header() {
         (log) =>
           log.action === "completed" &&
           new Date(log.timestamp) >= dayStart &&
-          new Date(log.timestamp) <= dayEnd
+          new Date(log.timestamp) <= dayEnd,
       );
 
       if (hasCompletion) {
@@ -85,7 +85,7 @@ export function Header() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 bg-muted/50"
           />
-          
+
           {/* Search Results Dropdown */}
           {searchQuery && searchResults.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-auto z-50">
@@ -113,15 +113,23 @@ export function Header() {
         <div className="flex-1 md:flex-none md:w-64 flex justify-end items-center gap-2">
           {/* Streak */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10">
-            <Flame className={`h-4 w-4 ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`} />
-            <span className={`text-sm font-medium ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`}>
+            <Flame
+              className={`h-4 w-4 ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`}
+            />
+            <span
+              className={`text-sm font-medium ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`}
+            >
               {streak}
             </span>
           </div>
 
           {/* Theme Toggle */}
           <Button variant="ghost" size="icon" onClick={toggleTheme}>
-            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            {isDark ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
           </Button>
         </div>
       </div>

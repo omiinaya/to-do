@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { Thing, Todo, ActivityLog, Priority, Recurrence } from '@/types';
+import { create } from "zustand";
+import { Thing, Todo, ActivityLog, Priority, Recurrence } from "@/types";
 
 interface TodoOptions {
   dueDate?: string | null;
@@ -27,8 +27,18 @@ interface TodoStore {
   deleteThing: (id: string) => Promise<void>;
 
   // Todo actions
-  addTodo: (thingName: string, note: string, priority?: Priority, options?: TodoOptions) => Promise<void>;
-  updateTodo: (id: string, note: string, priority?: Priority, options?: TodoOptions) => Promise<void>;
+  addTodo: (
+    thingName: string,
+    note: string,
+    priority?: Priority,
+    options?: TodoOptions,
+  ) => Promise<void>;
+  updateTodo: (
+    id: string,
+    note: string,
+    priority?: Priority,
+    options?: TodoOptions,
+  ) => Promise<void>;
   toggleTodo: (id: string) => Promise<void>;
   deleteTodo: (id: string) => Promise<void>;
 
@@ -60,19 +70,19 @@ export const useTodoStore = create<TodoStore>()((set, get) => ({
   },
 
   fetchThings: async () => {
-    const res = await fetch('/api/things');
+    const res = await fetch("/api/things");
     const json = await res.json();
     if (json.success) set({ things: json.data });
   },
 
   fetchTodos: async () => {
-    const res = await fetch('/api/todos?parentTodoId=null');
+    const res = await fetch("/api/todos?parentTodoId=null");
     const json = await res.json();
     if (json.success) set({ todos: json.data });
   },
 
   fetchLogs: async () => {
-    const res = await fetch('/api/logs');
+    const res = await fetch("/api/logs");
     const json = await res.json();
     if (json.success) set({ logs: json.data });
   },
@@ -87,9 +97,9 @@ export const useTodoStore = create<TodoStore>()((set, get) => ({
   },
 
   addThing: async (name: string, color?: string) => {
-    const res = await fetch('/api/things', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/things", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, color }),
     });
     const json = await res.json();
@@ -97,71 +107,89 @@ export const useTodoStore = create<TodoStore>()((set, get) => ({
       await get().fetchThings();
       return json.data;
     }
-    throw new Error('Failed to add thing');
+    throw new Error("Failed to add thing");
   },
 
   updateThing: async (id: string, name: string, color?: string) => {
     const res = await fetch(`/api/things/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, color }),
     });
     if (res.ok) await get().fetchThings();
   },
 
   deleteThing: async (id: string) => {
-    const res = await fetch(`/api/things/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/things/${id}`, { method: "DELETE" });
     if (res.ok) {
       await get().fetchAll();
     }
   },
 
-  addTodo: async (thingName: string, note: string, priority: Priority = 'medium', options?: TodoOptions) => {
-    const res = await fetch('/api/todos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+  addTodo: async (
+    thingName: string,
+    note: string,
+    priority: Priority = "medium",
+    options?: TodoOptions,
+  ) => {
+    const res = await fetch("/api/todos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ thingName, note, priority, ...options }),
     });
     if (res.ok) await get().fetchAll();
   },
 
-  updateTodo: async (id: string, note: string, priority?: Priority, options?: TodoOptions) => {
+  updateTodo: async (
+    id: string,
+    note: string,
+    priority?: Priority,
+    options?: TodoOptions,
+  ) => {
     const res = await fetch(`/api/todos/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ note, priority, ...options }),
     });
     if (res.ok) await get().fetchTodos();
   },
 
   toggleTodo: async (id: string) => {
-    const res = await fetch(`/api/todos/${id}/complete`, { method: 'PATCH' });
+    const res = await fetch(`/api/todos/${id}/complete`, { method: "PATCH" });
     if (res.ok) await get().fetchAll();
   },
 
   deleteTodo: async (id: string) => {
-    const res = await fetch(`/api/todos/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/todos/${id}`, { method: "DELETE" });
     if (res.ok) await get().fetchAll();
   },
 
   getStats: () => {
     const state = get();
     const totalTodos = state.todos.length;
-    const completedTodos = state.todos.filter(t => t.completed).length;
+    const completedTodos = state.todos.filter((t) => t.completed).length;
     const pendingTodos = totalTodos - completedTodos;
-    const completionRate = totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
+    const completionRate =
+      totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
 
-    const thingsStats = state.things.map(thing => {
-      const thingTodos = state.todos.filter(t => t.thingId === thing.id);
+    const thingsStats = state.things.map((thing) => {
+      const thingTodos = state.todos.filter((t) => t.thingId === thing.id);
       const total = thingTodos.length;
-      const completed = thingTodos.filter(t => t.completed).length;
+      const completed = thingTodos.filter((t) => t.completed).length;
       const pending = total - completed;
       const rate = total > 0 ? (completed / total) * 100 : 0;
 
       return { thing, total, completed, pending, rate };
     });
 
-    return { totalThings: state.things.length, totalTodos, completedTodos, pendingTodos, completionRate, thingsStats };
+    return {
+      totalThings: state.things.length,
+      totalTodos,
+      completedTodos,
+      pendingTodos,
+      completionRate,
+      thingsStats,
+    };
   },
 }));
 
