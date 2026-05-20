@@ -68,7 +68,7 @@ export async function GET() {
 
     const files = readdirSync(BACKUP_DIR)
       .filter(f => f.startsWith("backup-") && f.endsWith(".json"))
-      .sort()
+      .sort((a, b) => b.localeCompare(a))
       .reverse();
 
     return NextResponse.json({ success: true, data: files });
