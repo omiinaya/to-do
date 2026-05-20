@@ -37,7 +37,7 @@ export async function POST() {
     // Clean up old backups (keep only MAX_BACKUPS)
     const files = readdirSync(BACKUP_DIR)
       .filter(f => f.startsWith("backup-") && f.endsWith(".json"))
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
 
     if (files.length > MAX_BACKUPS) {
       const filesToDelete = files.slice(0, files.length - MAX_BACKUPS);
