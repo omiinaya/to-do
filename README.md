@@ -98,6 +98,7 @@ The included `nixpacks.toml` handles the build automatically.
 ### Viewing Stats
 
 Navigate to **Statistics** in the sidebar to see:
+
 - Completion rate and current streak
 - Weekly activity chart (created vs completed)
 - Priority distribution (donut chart)
@@ -107,6 +108,7 @@ Navigate to **Statistics** in the sidebar to see:
 ### Backup & Restore
 
 Go to **Settings** to:
+
 - **Export** - Downloads all your data as a JSON file
 - **Import** - Upload a previous backup to restore
 - **Delete All Data** - Wipe everything (asks twice for confirmation)

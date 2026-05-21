@@ -11,6 +11,7 @@ ToDo Tracker is a modern, professional-grade task management application built w
 ### 1. Quick Todo Entry
 
 #### Streamlined Input Flow
+
 ```
 ┌─────────────────────────────────────────────┐
 │  + Add Todo                                 │
@@ -30,6 +31,7 @@ ToDo Tracker is a modern, professional-grade task management application built w
 - **Inline creation** - add multiple todos quickly
 
 #### Thing-Based Organization
+
 - **Things**: Categories/topics (e.g., "Work", "Groceries", "Health", "Project X")
 - Each thing contains multiple todo items
 - Auto-created on first use
@@ -37,11 +39,12 @@ ToDo Tracker is a modern, professional-grade task management application built w
 - Collapsible sections in main view
 
 #### Todo Item Structure
+
 ```typescript
 interface Todo {
   id: string;
   thingId: string;
-  note: string;              // The actual task/note content
+  note: string; // The actual task/note content
   completed: boolean;
   createdAt: DateTime;
   completedAt: DateTime | null;
@@ -98,6 +101,7 @@ interface Todo {
 ### 5. Statistics Dashboard
 
 #### Overview Cards
+
 - Total things count
 - Total todos count
 - Overall completion rate
@@ -106,26 +110,32 @@ interface Todo {
 #### Charts & Graphs
 
 **Completion Trend (Line Chart)**
+
 - Daily/weekly completions over time
 - Shows productivity patterns
 
 **Todos by Thing (Horizontal Bar Chart)**
+
 - Pending vs completed per thing
 - Visual comparison of workload
 
 **Activity Heatmap (Calendar Grid)**
+
 - GitHub-style contribution graph
 - Color intensity = number of completions
 
 **Priority Breakdown (Donut Chart)**
+
 - Distribution by priority level
 - Completion rate per priority
 
 **Weekly Progress (Stacked Bar)**
+
 - Created vs completed per day
 - Shows backlog trends
 
 **Top Things Leaderboard**
+
 - Highest completion rates
 - Most active categories
 
@@ -134,6 +144,7 @@ interface Todo {
 ## User Interface Design
 
 ### Design System
+
 - **Framework**: shadcn/ui components
 - **Styling**: Tailwind CSS
 - **Theme**: Dark mode (default)
@@ -149,6 +160,7 @@ interface Todo {
   - Danger: `#ef4444` (red-500)
 
 ### Desktop Layout
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │ [Logo] ToDo Tracker    🔍 Search...    [🌙] [Menu] │
@@ -174,6 +186,7 @@ interface Todo {
 ```
 
 ### Mobile Layout (< 768px)
+
 ```
 ┌─────────────────────────┐
 │ [Logo]    🔍   [☰]     │
@@ -205,6 +218,7 @@ interface Todo {
 ```
 
 ### Mobile Navigation
+
 - **Bottom tab bar** with 5 tabs: Home, Todos, Stats, Logs, Settings
 - **Hamburger menu** for sidebar content on mobile
 - **Swipe gestures** for quick actions
@@ -215,13 +229,14 @@ interface Todo {
 
 ## Responsive Breakpoints
 
-| Breakpoint | Width | Layout |
-|------------|-------|--------|
-| Mobile | < 640px | Single column, bottom nav, hamburger menu |
-| Tablet | 640px - 1024px | Collapsible sidebar, 2-column grids |
-| Desktop | > 1024px | Fixed sidebar, multi-column layouts |
+| Breakpoint | Width          | Layout                                    |
+| ---------- | -------------- | ----------------------------------------- |
+| Mobile     | < 640px        | Single column, bottom nav, hamburger menu |
+| Tablet     | 640px - 1024px | Collapsible sidebar, 2-column grids       |
+| Desktop    | > 1024px       | Fixed sidebar, multi-column layouts       |
 
 ### Mobile-Specific Features
+
 - **Floating Action Button (FAB)** for quick add
 - **Bottom sheet** for add todo form
 - **Swipe left** to delete, **swipe right** to complete
@@ -233,11 +248,13 @@ interface Todo {
 ## REST API
 
 ### Base URL
+
 ```
 /api/v1
 ```
 
 ### Authentication (Future)
+
 ```
 Authorization: Bearer <token>
 ```
@@ -245,6 +262,7 @@ Authorization: Bearer <token>
 ### Endpoints
 
 #### Things
+
 ```http
 GET    /api/v1/things              # List all things
 POST   /api/v1/things              # Create a thing
@@ -254,6 +272,7 @@ DELETE /api/v1/things/:id          # Delete thing and all todos
 ```
 
 #### Todos
+
 ```http
 GET    /api/v1/todos               # List all todos (with filters)
 POST   /api/v1/todos               # Create a todo
@@ -264,6 +283,7 @@ DELETE /api/v1/todos/:id           # Delete todo
 ```
 
 #### Query Parameters
+
 ```http
 GET /api/v1/todos?thingId=work&completed=false&priority=high&limit=50&offset=0
 GET /api/v1/todos?createdAfter=2026-03-01&createdBefore=2026-03-31
@@ -271,6 +291,7 @@ GET /api/v1/todos?search=report&sortBy=createdAt&order=desc
 ```
 
 #### Statistics
+
 ```http
 GET /api/v1/stats                  # Overall statistics
 GET /api/v1/stats/things           # Per-thing statistics
@@ -279,6 +300,7 @@ GET /api/v1/stats/activity-heatmap # Activity data for heatmap
 ```
 
 #### Activity Logs
+
 ```http
 GET /api/v1/logs                   # List activity logs
 GET /api/v1/logs?thingId=work      # Filter by thing
@@ -287,6 +309,7 @@ GET /api/v1/logs?from=2026-03-01   # Date range
 ```
 
 ### API Response Format
+
 ```json
 {
   "success": true,
@@ -300,6 +323,7 @@ GET /api/v1/logs?from=2026-03-01   # Date range
 ```
 
 ### Error Response
+
 ```json
 {
   "success": false,
@@ -311,6 +335,7 @@ GET /api/v1/logs?from=2026-03-01   # Date range
 ```
 
 ### Example Usage for LLMs
+
 ```bash
 # Get all pending todos
 curl http://localhost:3000/api/v1/todos?completed=false
@@ -332,9 +357,11 @@ curl http://localhost:3000/api/v1/stats
 ## MCP (Model Context Protocol) Support [Future]
 
 ### Overview
+
 MCP allows AI agents (like Claude, GPT) to interact with ToDo Tracker programmatically.
 
 ### MCP Tools
+
 ```typescript
 // Tools exposed to AI agents
 const mcpTools = {
@@ -343,32 +370,34 @@ const mcpTools = {
   listTodos: "List todos with optional filters",
   getThingStats: "Get statistics for a thing",
   getOverallStats: "Get overall app statistics",
-  
+
   // Write operations
   createThing: "Create a new thing/category",
   createTodo: "Create a new todo item",
   completeTodo: "Mark a todo as complete",
   uncompleteTodo: "Mark a todo as incomplete",
   deleteTodo: "Delete a todo item",
-  
+
   // Analytics
   getProductivityReport: "Generate productivity insights",
-  suggestPriorities: "AI-suggested priority assignments"
+  suggestPriorities: "AI-suggested priority assignments",
 };
 ```
 
 ### MCP Resources
+
 ```typescript
 const mcpResources = {
   "things://list": "All things with metadata",
   "todos://pending": "All pending todos",
   "todos://completed/today": "Today's completed todos",
   "stats://overview": "Dashboard statistics",
-  "logs://recent": "Recent activity logs"
+  "logs://recent": "Recent activity logs",
 };
 ```
 
 ### Example AI Interactions
+
 ```
 User: "What do I need to do for work today?"
 AI: *calls listTodos(thingId="work", completed=false)*
@@ -385,6 +414,7 @@ AI: *calls getProductivityReport(period="week")*
 ## Technical Architecture
 
 ### Tech Stack
+
 - **Framework**: Next.js 14+ (App Router)
 - **UI**: shadcn/ui + Tailwind CSS
 - **State**: Zustand with localStorage persistence
@@ -398,6 +428,7 @@ AI: *calls getProductivityReport(period="week")*
 ### Data Models
 
 #### Thing
+
 ```typescript
 interface Thing {
   id: string;
@@ -409,6 +440,7 @@ interface Thing {
 ```
 
 #### Todo
+
 ```typescript
 interface Todo {
   id: string;
@@ -422,6 +454,7 @@ interface Todo {
 ```
 
 #### ActivityLog
+
 ```typescript
 interface ActivityLog {
   id: string;
@@ -436,6 +469,7 @@ interface ActivityLog {
 ```
 
 ### File Structure
+
 ```
 src/
 ├── app/
@@ -493,14 +527,14 @@ src/
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl/Cmd + N` | Quick add todo |
-| `Ctrl/Cmd + K` | Search |
-| `Ctrl/Cmd + B` | Toggle sidebar |
-| `Space` | Toggle todo completion (when focused) |
-| `Delete` | Delete todo (when focused) |
-| `Escape` | Close modals |
+| Shortcut       | Action                                |
+| -------------- | ------------------------------------- |
+| `Ctrl/Cmd + N` | Quick add todo                        |
+| `Ctrl/Cmd + K` | Search                                |
+| `Ctrl/Cmd + B` | Toggle sidebar                        |
+| `Space`        | Toggle todo completion (when focused) |
+| `Delete`       | Delete todo (when focused)            |
+| `Escape`       | Close modals                          |
 
 ---
 
@@ -519,6 +553,7 @@ src/
 ## Future Enhancements
 
 ### Short Term
+
 - Due dates with reminders
 - Recurring todos
 - Subtasks
@@ -526,12 +561,14 @@ src/
 - Tags/labels
 
 ### Medium Term
+
 - Cloud sync (Firebase/Supabase)
 - Collaboration/sharing
 - Calendar view
 - Kanban board view
 
 ### Long Term
+
 - AI-powered suggestions
 - Natural language input ("remind me Friday to call mom")
 - Mobile native app (React Native)
@@ -542,11 +579,13 @@ src/
 ## AI Chat Integration (Final Phase)
 
 ### Overview
+
 Integrate an AI assistant powered by OpenCode into the app. The assistant lives in a sleek chat panel and can read, create, complete, and manage todos on behalf of the user. Think of it as a smart sidebar chat that understands your todos and helps you get things done.
 
 ### UX Design
 
 **Desktop - Collapsible Side Panel**
+
 ```
 ┌──────────────────────────────┬─────────────────────┐
 │                              │  AI Assistant    [X]│
@@ -573,6 +612,7 @@ Integrate an AI assistant powered by OpenCode into the app. The assistant lives 
 ```
 
 **Mobile - Bottom Sheet / Full Screen**
+
 ```
 ┌─────────────────────────┐
 │  AI Assistant        [X] │
@@ -595,6 +635,7 @@ Integrate an AI assistant powered by OpenCode into the app. The assistant lives 
 ```
 
 ### Chat Features
+
 - **Floating chat button** (bottom-right) to open/close
 - **Persistent conversation history** per session
 - **Markdown rendering** for AI responses
@@ -604,17 +645,19 @@ Integrate an AI assistant powered by OpenCode into the app. The assistant lives 
 - **Streaming responses** for real-time feel
 
 ### What the AI Can Do
-| User Says | AI Action |
-|-----------|-----------|
-| "What do I have to do today?" | Reads and lists pending todos |
-| "Add buy groceries under Shopping" | Creates new todo |
-| "Mark the report as done" | Finds and completes matching todo |
-| "How productive was I this week?" | Runs stats and summarizes |
-| "Prioritize my Work todos" | Suggests priority ordering |
-| "Delete all completed Groceries" | Bulk deletes completed items |
-| "Remind me to call mom Friday" | Creates todo with due date (future) |
+
+| User Says                          | AI Action                           |
+| ---------------------------------- | ----------------------------------- |
+| "What do I have to do today?"      | Reads and lists pending todos       |
+| "Add buy groceries under Shopping" | Creates new todo                    |
+| "Mark the report as done"          | Finds and completes matching todo   |
+| "How productive was I this week?"  | Runs stats and summarizes           |
+| "Prioritize my Work todos"         | Suggests priority ordering          |
+| "Delete all completed Groceries"   | Bulk deletes completed items        |
+| "Remind me to call mom Friday"     | Creates todo with due date (future) |
 
 ### Backend Architecture
+
 ```
 ┌──────────────┐     ┌───────────────┐     ┌──────────────┐
 │  Chat UI     │────▶│  /api/chat    │────▶│  OpenCode    │
@@ -630,12 +673,14 @@ Integrate an AI assistant powered by OpenCode into the app. The assistant lives 
 ```
 
 ### OpenCode Integration
+
 - OpenCode runs as a backend service
 - Exposes tools that map to our API endpoints
 - Receives context about user's todos on each request
 - Streams responses back to the frontend
 
 ### Chat API Endpoint
+
 ```http
 POST /api/chat
 Content-Type: application/json
@@ -650,6 +695,7 @@ Content-Type: application/json
 ```
 
 **Response (Streaming)**
+
 ```
 data: {"type": "text", "content": "You have "}
 data: {"type": "text", "content": "4 pending "}
@@ -660,6 +706,7 @@ data: {"type": "done"}
 ```
 
 ### Tools Exposed to OpenCode
+
 ```typescript
 const chatTools = {
   listTodos: "List todos with filters",
@@ -671,11 +718,12 @@ const chatTools = {
   getLogs: "Get recent activity logs",
   searchTodos: "Search todos by text",
   bulkComplete: "Complete multiple todos",
-  bulkDelete: "Delete multiple todos"
+  bulkDelete: "Delete multiple todos",
 };
 ```
 
 ### Implementation Notes
+
 - **Phase 1**: Basic chat with text responses
 - **Phase 2**: Tool calling (AI can manipulate todos)
 - **Phase 3**: Streaming + inline todo cards
